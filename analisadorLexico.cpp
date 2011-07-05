@@ -89,7 +89,6 @@ void AnalisadorLexico::TrataSimbolo(char Simbolo){
 			  if (this->ReadBuf.getLastCharOnBuffer()== ':'){
 				 this->TokenFound(); 
 			  }	
-			  //this->ReadBuf.getLastCharOnBuffer() == ':';
 			  break; 
 			}				// =  		
 		case '-': // - //>
