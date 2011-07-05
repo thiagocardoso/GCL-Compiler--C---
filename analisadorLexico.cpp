@@ -80,28 +80,39 @@ void AnalisadorLexico::TrataSimbolo(char Simbolo){
 	switch (Simbolo){
 		case '.': // .
 		//case '.': 
-		case '=': break;
-		case ':': // =  		
+		case ':': 
+			{ this->ReadBuf.AddToBuffer(Simbolo);
+			 break;
+			}
+		case '=': 
+		    { this->ReadBuf.AddToBuffer(Simbolo);
+			  if (this->ReadBuf.getLastCharOnBuffer()== ':'){
+				 this->TokenFound(); 
+			  }	
+			  //this->ReadBuf.getLastCharOnBuffer() == ':';
+			  break; 
+			}				// =  		
 		case '-': // - //>
 		//case '-':
-		case ',': break;  
-		case ';': break;  
-		case '(': break; 
-		case ')': break; 
+		case ',': this->ReadBuf.AddToBuffer(Simbolo);break;  
+		case ';': this->ReadBuf.AddToBuffer(Simbolo); break;  
+		case '(': this->ReadBuf.AddToBuffer(Simbolo);break; 
+		case ')': this->ReadBuf.AddToBuffer(Simbolo);break; 
 		case '[': // ] 
 		//case '[': 
 		//case ']':		
-		case '#': break;   
+		case '#': this->ReadBuf.AddToBuffer(Simbolo);break;   
 	    case '<': // =
 	    case '>': // =  
-	    case '&': break;   
-	    case '|': break;  
-	    case '~': break;  
-	    case '+': break;   	    
-	    case '*': break;   
-	    case '/': break;   
-	    case '\'': break;	    
-	    default: break;
+	    case '&': this->ReadBuf.AddToBuffer(Simbolo);break;   
+	    case '|': this->ReadBuf.AddToBuffer(Simbolo);break;  
+	    case '~': this->ReadBuf.AddToBuffer(Simbolo);break;  
+	    case '+': this->ReadBuf.AddToBuffer(Simbolo);break;   	    
+	    case '*': this->ReadBuf.AddToBuffer(Simbolo);break;   
+	    case '/': this->ReadBuf.AddToBuffer(Simbolo);break;   
+	    case '\'':this->ReadBuf.AddToBuffer(Simbolo);break;	    
+	    default: //this->TokenFound(); 
+	    break;
 	}
 }
 
@@ -149,7 +160,8 @@ void AnalisadorLexico::Automato(char Value){
 						this->Automato(Value);
 					}else{
 						this->CurrentTokenType = ttSymbol;
-						this->TrataSimbolo(Value);
+						Estado = S3;
+						this->Automato(Value);
 					}
 				}
 			}			
@@ -163,6 +175,10 @@ void AnalisadorLexico::Automato(char Value){
 			this->TrataDigito(Value);
 			break;
 		}		
+		case S3:{
+			this->TrataSimbolo(Value);
+			break;
+		}
 		default: break;
 	}
 }
