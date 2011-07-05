@@ -4,6 +4,7 @@
 #include <ctype.h>
 #include "token.cpp"
 #include "readbuffer.cpp"
+#include "keywordlist.cpp"
 using namespace std;
 
 enum lexState {S0, S1, S2, S3, S4, S5, S6, S7, S8, S9, S10, S11, S12, 
@@ -17,7 +18,8 @@ class AnalisadorLexico {
 		string Buffer;
 		lexState Estado;	
 		bool ValidToken;
-		tokenType CurrentTokenType;		
+		tokenType CurrentTokenType;
+		KeywordList palavrasReservadas;		
 	protected:
 		bool IsValidChar(char Value);
 		void Automato(char Value);
@@ -63,17 +65,26 @@ string AnalisadorLexico::getFileName()
 }
 
 bool AnalisadorLexico::IsValidChar(char Value){
-	return (Value!=' ');
+	bool isValid = false;
+	isValid = (Value!=' ');
+	isValid = int(Value) > 32;
+	return isValid;
 }
 
 Token* AnalisadorLexico::getToken(){
 	TokenFactory tkFactory;		
+	Token* returnToken = NULL;
 	
 	while ((this->ReadBuf.IsFileGood())and(not(this->ValidToken))){	
 		this->Automato(this->ReadBuf.getChar());
 	}
+	
+	if (this->ValidToken){
+		returnToken = tkFactory.getToken(this->CurrentTokenType, this->ReadBuf.getBuffer());
+	}
+	
 	this->ValidToken = false;
-	return tkFactory.getToken(this->CurrentTokenType, this->ReadBuf.getBuffer());
+	return returnToken;
 }
 
 void AnalisadorLexico::TrataSimbolo(char Simbolo){
@@ -118,7 +129,11 @@ void AnalisadorLexico::TrataSimbolo(char Simbolo){
 void AnalisadorLexico::TokenFound(){
 	ValidToken = true;
 	Estado = S0;	
-	this->ReadBuf.PriorColNumber();
+	this->ReadBuf.PriorColNumber();	
+	
+	if(this->palavrasReservadas.isKeyWord(this->ReadBuf.getBuffer())){
+		this->CurrentTokenType = ttKeyword;
+	}
 }
 
 void AnalisadorLexico::TrataIdentificador(char Value){
