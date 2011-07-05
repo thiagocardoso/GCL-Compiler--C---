@@ -1,35 +1,24 @@
 #include <iostream>
 #include <string>
-#include "analisadorLexico.cpp"
+#include "analisadorSintatico.cpp"
 using namespace std;
 
-int main(){	
-	AnalisadorLexico anaLex("teste.txt");	
-	Token* myToken;
+void Executa(string fileName){
+	AnalisadorSintatico analSint(fileName);
+	analSint.GeraArvoreSintatica();	
+}
+
+int main(int argc, char** argv){		
+	int i;	
+	string fileName;
+	for(i=1;i<argc;i++){				
+		fileName = argv[i];
+	}
 	
-	
-	
-	while (not(anaLex.SourceEOF())){
-		myToken = anaLex.getToken();	
-		if (myToken != NULL){
-			cout <<endl;
-			switch (myToken->getTipo()){
-				case ttId:
-					cout << "Identificador:";
-					break;
-				case ttNumber:
-					cout << "Número:";
-					break;
-				case ttKeyword:
-					cout << "Palavra Reservada:";
-					break;
-				case ttSymbol:
-					cout << "Símbolo:";
-					break;
-				default: break;				
-			}			
-			cout << myToken->getLexema()<<endl;
-		}						
-	}	
+	if (fileName!=""){
+		Executa(fileName);
+	}else{
+		cout << "Erro: informe um arquivo para compilar." <<endl;
+	}
 }
 
