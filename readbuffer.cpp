@@ -13,8 +13,8 @@ class ReadBuffer {
 		string BufferRead;
 		string BufferWrite;
 	protected:
-		bool IsBufferEmpty();
 		void LoadBuffer();
+		bool IsBufferEmpty();
 	public:
 		ReadBuffer();	
 		~ReadBuffer();
@@ -26,10 +26,12 @@ class ReadBuffer {
 		void ClearBuffer();
 		void PriorColNumber();
 		bool IsFileOpen();
-		bool IsFileGood();	
+		bool IsFileGood();
+		bool IsBufferWriteEmpty();
 		string getBuffer();	
 		char getLastCharOnBuffer();
 		char getChar();
+		 
 };
 
 ReadBuffer::ReadBuffer(){	
@@ -46,6 +48,14 @@ ReadBuffer::~ReadBuffer(){
 		this->SourceFile.close();	
 	}
 }
+
+int ReadBuffer::getLineNumber(){
+	return this->LineNumber;
+}
+
+int ReadBuffer::getColNumber(){
+	return this->ColNumber;
+}		
 
 void ReadBuffer::OpenFile(string SourceName){
 	this->SourceFile.open(SourceName.c_str());	
@@ -100,3 +110,8 @@ void ReadBuffer::ClearBuffer(){
 string ReadBuffer::getBuffer(){
 	return this->BufferWrite;
 }
+
+bool ReadBuffer::IsBufferWriteEmpty(){
+	return (this->BufferWrite.empty());
+}
+

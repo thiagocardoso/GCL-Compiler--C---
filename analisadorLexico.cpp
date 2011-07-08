@@ -18,6 +18,7 @@ class AnalisadorLexico {
 		string Buffer;
 		lexState Estado;	
 		bool ValidToken;
+		void CheckAddToBuffer(char SimboloEsp, char Simbol);
 		tokenType CurrentTokenType;
 		KeywordList palavrasReservadas;		
 	protected:
@@ -26,6 +27,9 @@ class AnalisadorLexico {
 		void TrataIdentificador(char Value);
 		void TrataDigito(char Value);
 		void TrataSimbolo(char Simbolo);
+		void TrataUmSimbolo(char Simbolo);
+		void TrataDoisSimbolo(char Simbolo);
+ 
 		void TokenFound();		
 	public:
 		AnalisadorLexico(string NomeArquivo);
@@ -80,52 +84,92 @@ Token* AnalisadorLexico::getToken(){
 	}
 	
 	if (this->ValidToken){
-		returnToken = tkFactory.getToken(this->CurrentTokenType, this->ReadBuf.getBuffer());
+		returnToken = tkFactory.getToken(this->CurrentTokenType, 
+			this->ReadBuf.getBuffer(), this->ReadBuf.getLineNumber(), 
+			(this->ReadBuf.getColNumber() - (this->ReadBuf.getBuffer().size()-2)));
 	}
 	
 	this->ValidToken = false;
 	return returnToken;
 }
 
-void AnalisadorLexico::TrataSimbolo(char Simbolo){
+
+void AnalisadorLexico:: TrataUmSimbolo(char Simbolo){
 	switch (Simbolo){
-		case '.': // .
-		//case '.': 
-		case ':': 
-			{ this->ReadBuf.AddToBuffer(Simbolo);
-			 break;
-			}
-		case '=': 
-		    { this->ReadBuf.AddToBuffer(Simbolo);
-			  if (this->ReadBuf.getLastCharOnBuffer()== ':'){
-				 this->TokenFound(); 
-			  }	
-			  break; 
-			}				// =  		
-		case '-': // - //>
-		//case '-':
+		case '.': this->ReadBuf.AddToBuffer(Simbolo);break; 
+		case ':': this->ReadBuf.AddToBuffer(Simbolo);break;
+		case '=': this->ReadBuf.AddToBuffer(Simbolo);break;
+		case '-': this->ReadBuf.AddToBuffer(Simbolo);break;
 		case ',': this->ReadBuf.AddToBuffer(Simbolo);break;  
-		case ';': this->ReadBuf.AddToBuffer(Simbolo); break;  
+		case ';': this->ReadBuf.AddToBuffer(Simbolo);break;  
 		case '(': this->ReadBuf.AddToBuffer(Simbolo);break; 
 		case ')': this->ReadBuf.AddToBuffer(Simbolo);break; 
-		case '[': // ] 
-		//case '[': 
-		//case ']':		
+		case '[': this->ReadBuf.AddToBuffer(Simbolo);break; 
+		case ']': this->ReadBuf.AddToBuffer(Simbolo);break; 
 		case '#': this->ReadBuf.AddToBuffer(Simbolo);break;   
-	    case '<': // =
-	    case '>': // =  
+	    case '<': this->ReadBuf.AddToBuffer(Simbolo);break;
+	    case '>': this->ReadBuf.AddToBuffer(Simbolo);break;  
 	    case '&': this->ReadBuf.AddToBuffer(Simbolo);break;   
 	    case '|': this->ReadBuf.AddToBuffer(Simbolo);break;  
 	    case '~': this->ReadBuf.AddToBuffer(Simbolo);break;  
 	    case '+': this->ReadBuf.AddToBuffer(Simbolo);break;   	    
 	    case '*': this->ReadBuf.AddToBuffer(Simbolo);break;   
 	    case '/': this->ReadBuf.AddToBuffer(Simbolo);break;   
-	    case '\'':this->ReadBuf.AddToBuffer(Simbolo);break;	    
-	    default: //this->TokenFound(); 
-	    break;
+	    case '\'':this->ReadBuf.AddToBuffer(Simbolo);break;
+	    default: //this->TokenFound();
+	    break; 
 	}
 }
 
+void AnalisadorLexico::TrataDoisSimbolo(char Simbolo){
+	switch (Simbolo){
+		case '.': {this->CheckAddToBuffer('.',Simbolo); break;}
+		
+		case '=': { if (this->ReadBuf.getLastCharOnBuffer() == '<'){
+					  this->CheckAddToBuffer('<',Simbolo); 		
+					}
+				  else{ if (this->ReadBuf.getLastCharOnBuffer() == '>'){
+						   this->CheckAddToBuffer('>',Simbolo);
+						}
+					  else{if (this->ReadBuf.getLastCharOnBuffer() == ':'){
+							  this->CheckAddToBuffer(':',Simbolo);
+						     }
+				          } 		  
+		 			  }
+		break;}
+		
+		case '-': {this->CheckAddToBuffer('-',Simbolo); break;}
+		
+		case ']': {this->CheckAddToBuffer('[',Simbolo); break;} 
+	    default: this->TokenFound();
+	    break; 
+	}
+}
+
+
+void AnalisadorLexico::CheckAddToBuffer(char SimboloEsp,char Simbol){
+	if (this->ReadBuf.getLastCharOnBuffer()==SimboloEsp){
+		this->ReadBuf.AddToBuffer(Simbol);
+	}
+	else{
+		this->TokenFound();
+	}
+}
+
+void AnalisadorLexico::TrataSimbolo(char Simbolo){
+	if (this->ReadBuf.IsBufferWriteEmpty()){
+		this->TrataUmSimbolo(Simbolo);
+	}
+	else{
+		if(this->ReadBuf.getBuffer().size() == 1){
+			this->TrataDoisSimbolo(Simbolo);
+ 		}
+		else{
+			this->TokenFound();
+		}
+	}
+}
+	
 void AnalisadorLexico::TokenFound(){
 	ValidToken = true;
 	Estado = S0;	
@@ -157,6 +201,7 @@ void AnalisadorLexico::TrataDigito(char Value){
 		this->TokenFound();
 	}	
 }
+
 
 void AnalisadorLexico::Automato(char Value){
 	switch (Estado) {
@@ -196,3 +241,4 @@ void AnalisadorLexico::Automato(char Value){
 		default: break;
 	}
 }
+

@@ -50,7 +50,7 @@ void AnalisadorSintatico::GeraArvoreSintatica(){
 					break;
 				default: break;				
 			}			
-			cout << myToken->getLexema()<<endl;
+			cout << myToken->getLexema()<< " linha: "<< myToken->getLine() << " coluna:"<< myToken->getColumn() <<endl;
 		}						
 	}			
 }
