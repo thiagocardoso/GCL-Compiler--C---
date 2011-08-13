@@ -1,0 +1,8 @@
+[] [ 
+teste
+if
+while
+for
+56
+37.5
+66,7

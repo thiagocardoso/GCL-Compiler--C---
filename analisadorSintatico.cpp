@@ -9,12 +9,12 @@ class ArvoreSintaticaAbstrata {
 class AnalisadorSintatico {
 	private:
 		ArvoreSintaticaAbstrata arvore;
-		AnalisadorLexico *anaLexico;		
+		AnalisadorLexico *anaLexico;
 	public:
 		AnalisadorSintatico(string caminhoArquivo);
 		~AnalisadorSintatico();
 		ArvoreSintaticaAbstrata getArvoreSintatica();
-		void GeraArvoreSintatica();		
+		void GeraArvoreSintatica();
 };
 
 AnalisadorSintatico::AnalisadorSintatico(string caminhoArquivo){
