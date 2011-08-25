@@ -47,9 +47,14 @@ class NonTerminalHandle: public Handle{
 		HandleList list;
 		HandleList otherList;
 		string production;
+		bool allowEmpty;
+	protected:
+		virtual void InnerSetup();
 	public:
 		void setProduction(string value);
 		string getProduction();
+		void setAllowEmpty(bool value);
+		bool getAllowEmpty();
 		HandleList* getList();		
 		HandleList* getOtherList();
 		virtual void createHandleList()=0;
@@ -199,6 +204,17 @@ Handle* HandleList::getHandle(){
 	return *elem;		
 }
 
+void NonTerminalHandle::InnerSetup(){	
+}
+
+void NonTerminalHandle::setAllowEmpty(bool value){
+	this->allowEmpty = value;
+}
+
+bool NonTerminalHandle::getAllowEmpty(){
+	return this->allowEmpty;
+}
+
 void NonTerminalHandle::setProduction(string value){
 	this->production = value;
 }
@@ -216,8 +232,10 @@ string NonTerminalHandle::getProduction(){
 }
 
 void NonTerminalHandle::setUpHandle(){
+	this->setAllowEmpty(false);
 	this->setType(htNonTerminal);
-	this->createHandleList();
+	this->InnerSetup();
+	this->createHandleList();	
 	
 	this->getOtherList()->first();
 	while(!this->getOtherList()->eof()){

@@ -47,7 +47,9 @@ void AnalisadorSintatico::setUpGrammar(){
 	com.setGrammar(&this->grammar);
 	com.Execute();	
 	
-	this->grammar.setSimboloInicial(new BooleanConstant());
+	//this->grammar.setSimboloInicial(new BooleanConstant());
+	//this->grammar.setSimboloInicial(new RelationalOperator());
+	this->grammar.setSimboloInicial(new IndexOrComp());
 	this->grammar.getSimboloInicial()->setUpHandle();
 }
 
@@ -121,6 +123,10 @@ bool AnalisadorSintatico::ValidaHandle(Handle * handle){
 			}
 		}
 		
+		if (!result){
+			result = ntHandle->getAllowEmpty();
+		}
+		
 	}else{
 		cout << "Entrou terminal" <<endl;
 		result = handle->getHandleName()== this->actualToken->getLexema();
@@ -133,11 +139,13 @@ bool AnalisadorSintatico::ValidaProducoes(){
 	//Token* myToken;		
 	
 	//this->actualHandle = this->grammar.getSimboloInicial();	
-		
+	this->accept = true;
 	this->actualToken = this->anaLexico->getToken();
 	//this->pilhaToken.push_front(myToken);
+	while(!this->anaLexico->SourceEOF()){
+		result = this->ValidaHandle(this->grammar.getSimboloInicial());
+		this->accept = this->accept && result;
+	}
 	
-	result = this->ValidaHandle(this->grammar.getSimboloInicial());
-	
-	return result;
+	return this->accept;
 }
