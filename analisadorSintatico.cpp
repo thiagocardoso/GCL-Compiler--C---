@@ -1,6 +1,9 @@
 #include <string.h>
+#include <list>
 #include "analisadorLexico.cpp"
-#include "producao.cpp"
+//#include "producao.cpp"
+#include "syntaxHandles.cpp"
+#include "syntaxHandlesImpl.cpp"
 using namespace std;
 
 class ArvoreSintaticaAbstrata {
@@ -8,20 +11,44 @@ class ArvoreSintaticaAbstrata {
 
 class AnalisadorSintatico {
 	private:
+		Gramatica grammar;
 		ArvoreSintaticaAbstrata arvore;
 		AnalisadorLexico *anaLexico;
+		Handle * actualHandle;
+		Token * actualToken;
+		bool accept;
+		bool error;
+		std::list<Token*> pilhaToken;
+		
+		void setUpGrammar();
+	protected:
+		bool ValidaHandle(Handle * handle);
 	public:
 		AnalisadorSintatico(string caminhoArquivo);
 		~AnalisadorSintatico();
 		ArvoreSintaticaAbstrata getArvoreSintatica();
 		void GeraArvoreSintatica();
+		void ListaHandles();
+		bool ValidaProducoes();
 };
 
-AnalisadorSintatico::AnalisadorSintatico(string caminhoArquivo){
-	this->anaLexico = new AnalisadorLexico(caminhoArquivo);
+AnalisadorSintatico::AnalisadorSintatico(string caminhoArquivo){	
+	this->anaLexico = new AnalisadorLexico(caminhoArquivo);	
+	this->setUpGrammar();
+	this->accept = false;
+	this->error = false;
 }
 
 AnalisadorSintatico::~AnalisadorSintatico(){	
+}
+
+void AnalisadorSintatico::setUpGrammar(){
+	RegisterHandlesCommand com;	
+	com.setGrammar(&this->grammar);
+	com.Execute();	
+	
+	this->grammar.setSimboloInicial(new BooleanConstant());
+	this->grammar.getSimboloInicial()->setUpHandle();
 }
 
 ArvoreSintaticaAbstrata AnalisadorSintatico::getArvoreSintatica(){
@@ -53,4 +80,64 @@ void AnalisadorSintatico::GeraArvoreSintatica(){
 			cout << myToken->getLexema()<< " linha: "<< myToken->getLine() << " coluna:"<< myToken->getColumn() <<endl;
 		}						
 	}			
+}
+
+void AnalisadorSintatico::ListaHandles(){	
+	this->grammar.setUp();	
+	this->grammar.printHandleList();	
+}
+
+bool AnalisadorSintatico::ValidaHandle(Handle * handle){
+	bool result = true;
+	NonTerminalHandle *ntHandle;
+		
+	if(handle->getType()==htNonTerminal){		
+		cout << "Entrou não terminal" <<endl;
+		
+		ntHandle = (NonTerminalHandle*)handle;
+		ntHandle->getList()->first();
+		while((!ntHandle->getList()->eof())&&(result)){
+			result = ValidaHandle(ntHandle->getList()->getHandle());
+			
+			if (result){
+				this->pilhaToken.push_front(this->actualToken);
+				this->actualToken = this->anaLexico->getToken();
+			}
+			
+			ntHandle->getList()->nextHandle();
+		}
+		
+		if (!result){
+			ntHandle->getOtherList()->first();
+			while((!ntHandle->getOtherList()->eof())&&(!result)){
+				result = ValidaHandle(ntHandle->getOtherList()->getHandle());
+				
+				if (result){
+					this->pilhaToken.push_front(this->actualToken);
+					this->actualToken = this->anaLexico->getToken();
+				}
+				
+				ntHandle->getOtherList()->nextHandle();
+			}
+		}
+		
+	}else{
+		cout << "Entrou terminal" <<endl;
+		result = handle->getHandleName()== this->actualToken->getLexema();
+	}	
+	return result;
+}
+
+bool AnalisadorSintatico::ValidaProducoes(){
+	bool result = true;	
+	//Token* myToken;		
+	
+	//this->actualHandle = this->grammar.getSimboloInicial();	
+		
+	this->actualToken = this->anaLexico->getToken();
+	//this->pilhaToken.push_front(myToken);
+	
+	result = this->ValidaHandle(this->grammar.getSimboloInicial());
+	
+	return result;
 }

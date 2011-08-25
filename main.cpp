@@ -5,7 +5,14 @@ using namespace std;
 
 void Executa(string fileName){
 	AnalisadorSintatico analSint(fileName);
-	analSint.GeraArvoreSintatica();	
+	//analSint.GeraArvoreSintatica();	
+	//analSint.ListaHandles();
+	
+	if (analSint.ValidaProducoes()){
+		cout << "Reconheceu!"<<endl;
+	}else{
+		cout << "Erro!"<<endl;
+	}
 }
 
 int main(int argc, char** argv){		
