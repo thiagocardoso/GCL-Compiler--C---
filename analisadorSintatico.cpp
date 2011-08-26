@@ -30,6 +30,7 @@ class AnalisadorSintatico {
 		void GeraArvoreSintatica();
 		void ListaHandles();
 		bool ValidaProducoes();
+		void Erro(string Message);
 };
 
 AnalisadorSintatico::AnalisadorSintatico(string caminhoArquivo){	
@@ -99,12 +100,7 @@ bool AnalisadorSintatico::ValidaHandle(Handle * handle){
 		ntHandle = (NonTerminalHandle*)handle;
 		ntHandle->getList()->first();
 		while((!ntHandle->getList()->eof())&&(result)){
-			result = ValidaHandle(ntHandle->getList()->getHandle());
-			
-			if (result){
-				this->pilhaToken.push_front(this->actualToken);
-				this->actualToken = this->anaLexico->getToken();
-			}
+			result = ValidaHandle(ntHandle->getList()->getHandle());		
 			
 			ntHandle->getList()->nextHandle();
 		}
@@ -114,19 +110,20 @@ bool AnalisadorSintatico::ValidaHandle(Handle * handle){
 			while((!ntHandle->getOtherList()->eof())&&(!result)){
 				result = ValidaHandle(ntHandle->getOtherList()->getHandle());
 				
-				if (result){
-					this->pilhaToken.push_front(this->actualToken);
-					this->actualToken = this->anaLexico->getToken();
-				}
-				
 				ntHandle->getOtherList()->nextHandle();
 			}
 		}
 		
-		if (!result){
+		if (result){
+			this->pilhaToken.push_front(this->actualToken);
+			this->actualToken = this->anaLexico->getToken();
+		}else{		
+			if (!ntHandle->getAllowEmpty()){
+				this->Erro("Token errado!");
+				this->actualToken = this->anaLexico->getToken();
+			}
 			result = ntHandle->getAllowEmpty();
-		}
-		
+		}		
 	}else{
 		cout << "Entrou terminal" <<endl;
 		result = handle->getHandleName()== this->actualToken->getLexema();
@@ -148,4 +145,7 @@ bool AnalisadorSintatico::ValidaProducoes(){
 	}
 	
 	return this->accept;
+}
+
+void AnalisadorSintatico::Erro(string Message){
 }
