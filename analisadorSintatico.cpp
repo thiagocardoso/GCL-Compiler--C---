@@ -49,8 +49,8 @@ void AnalisadorSintatico::setUpGrammar(){
 	com.Execute();	
 	
 	//this->grammar.setSimboloInicial(new BooleanConstant());
-	//this->grammar.setSimboloInicial(new RelationalOperator());
-	this->grammar.setSimboloInicial(new IndexOrComp());
+	this->grammar.setSimboloInicial(new RelationalOperator());
+	//this->grammar.setSimboloInicial(new IndexOrComp());
 	this->grammar.getSimboloInicial()->setUpHandle();
 }
 
@@ -117,13 +117,16 @@ bool AnalisadorSintatico::ValidaHandle(Handle * handle){
 		if (result){
 			this->pilhaToken.push_front(this->actualToken);
 			this->actualToken = this->anaLexico->getToken();
-		}else{		
+		}
+		/*
+		else{		
 			if (!ntHandle->getAllowEmpty()){
 				this->Erro("Token errado!");
 				this->actualToken = this->anaLexico->getToken();
 			}
 			result = ntHandle->getAllowEmpty();
-		}		
+		}
+		*/		
 	}else{
 		cout << "Entrou terminal" <<endl;
 		result = handle->getHandleName()== this->actualToken->getLexema();

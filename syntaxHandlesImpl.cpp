@@ -73,7 +73,7 @@ class RelationalOperator6: public RelationalOperator {
 };
 
 void RegisterHandlesCommand::Execute(){
-	this->grammar->registerHandle(new BooleanConstant());
+	//this->grammar->registerHandle(new BooleanConstant());
 	this->grammar->registerHandle(new RelationalOperator());	
 }
 
@@ -138,7 +138,7 @@ void RelationalOperator6::createHandleList(){
 }
 
 void IndexOrComp::InnerSetup(){
-	this->setAllowEmpty(true);
+	this->setAllowEmpty(false);
 	this->setHandleName("indexOrComp");
 }
 
