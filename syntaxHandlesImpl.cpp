@@ -144,22 +144,16 @@ void IndexOrComp::InnerSetup(){
 }
 
 void IndexOrComp::createHandleList(){
-	NonTerminalHandle *handle;
-	IndexOrComp *handle2;
-	
-	handle = new IndexOrCompParts();
-	this->getList()->addHandle(handle);
-	handle2 = new IndexOrComp();
-	this->getList()->addHandle(handle2);
+	this->getList()->addHandle(new IndexOrCompParts());
+	this->getList()->addHandle(new IndexOrComp());
 }
 
-void IndexOrCompParts::InnerSetup(){
-	cout << "******************* PASSOU AQUI*********************"<<endl;
+void IndexOrCompParts::InnerSetup(){	
 	this->setHandleName("indexOrCompParts");
 }
 
 void IndexOrCompParts::createHandleList(){
-	HandleFactory hFactory;		
+	HandleFactory hFactory;			
 	this->getList()->addHandle(hFactory.getTerminalHandle(".", ttSymbol, "."));
 	this->getList()->addHandle(hFactory.getTerminalHandle("Number", ttNumber, "0"));
 	

@@ -93,6 +93,8 @@ void AnalisadorSintatico::ListaHandles(){
 bool AnalisadorSintatico::ValidaHandle(Handle * handle){
 	bool result = true;
 	NonTerminalHandle *ntHandle;
+	
+	handle->setUpHandle();
 		
 	if(handle->getType()==htNonTerminal){		
 		cout << "Entrou não terminal: " << handle->getHandleName() <<endl;
