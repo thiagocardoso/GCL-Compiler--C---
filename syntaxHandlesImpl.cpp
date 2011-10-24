@@ -10,6 +10,7 @@ class RegisterHandlesCommand {
 
 class Expression: public NonTerminalHandle {
 	public:
+		void InnerSetup();
 		void createHandleList();
 };
 
@@ -169,5 +170,10 @@ void IndexOrCompParts2::createHandleList(){
 	this->getList()->addHandle(hFactory.getTerminalHandle("]", ttSymbol, "]"));
 }
 
+void Expression::InnerSetup(){
+	this->setAllowEmpty(true);
+}
+
 void Expression::createHandleList(){
 }
+

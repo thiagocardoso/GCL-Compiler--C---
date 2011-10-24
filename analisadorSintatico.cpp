@@ -93,6 +93,7 @@ void AnalisadorSintatico::ListaHandles(){
 bool AnalisadorSintatico::ValidaHandle(Handle * handle){
 	bool result = true;
 	NonTerminalHandle *ntHandle;
+	TerminalHandle *tHandle;
 	
 	handle->setUpHandle();
 		
@@ -116,29 +117,34 @@ bool AnalisadorSintatico::ValidaHandle(Handle * handle){
 			}
 		}
 		
-		if (result){
-			this->pilhaToken.push_front(this->actualToken);
-			this->actualToken = this->anaLexico->getToken();
-		}		
-		else{		
-			//if (!ntHandle->getAllowEmpty()){
-			//	this->Erro("Token errado!");
-			//	this->actualToken = this->anaLexico->getToken();
-			//}
-			if (ntHandle->getAllowEmpty()){
-				result = true;
-				this->actualToken = this->anaLexico->getToken();
-			}
-			//result = ntHandle->getAllowEmpty();
+		if (!result){
+			result = ntHandle->getAllowEmpty();			
 		}		
 	}else{
 		cout << "Entrou terminal: " << this->actualToken->getLexema() << " Teste: " << handle->getHandleName() <<endl;
-		result = handle->getHandleName()==this->actualToken->getLexema();
+		//result = handle->getHandleName()==this->actualToken->getLexema();
+		tHandle = (TerminalHandle*)handle;
+		
+		switch (tHandle->getToken()->getTipo()){
+			case ttNumber:
+			case ttId:{
+				result = tHandle->getToken()->getTipo()==this->actualToken->getTipo();
+				break;
+			}
+			case ttKeyword:
+			case ttSymbol:{
+				result = tHandle->getToken()->getLexema()==this->actualToken->getLexema();
+				break;
+			}
+		}
 	}	
 	
 	if (result){
+		this->pilhaToken.push_front(this->actualToken);
+		this->actualToken = this->anaLexico->getToken();
 		cout << "Reconheceu handle: " << handle->getHandleName() <<endl;
 	}else{
+		Erro("Não reconheceu handle: " + handle->getHandleName());
 		cout << "Não reconheceu handle: " << handle->getHandleName() <<endl;
 	}
 	
@@ -152,8 +158,8 @@ bool AnalisadorSintatico::ValidaProducoes(){
 	this->actualToken = this->anaLexico->getToken();	
 	while(((!this->anaLexico->SourceEOF())||(this->actualToken!=NULL))&&(result)){
 		cout << "----------------------------------entrou na validacao" <<endl;
-		result = this->ValidaHandle(this->grammar.getSimboloInicial());	
 		if(this->actualToken!=NULL){
+			result = this->ValidaHandle(this->grammar.getSimboloInicial());			
 			cout << "---------------------------------->" << this->actualToken->getLexema() <<endl;
 		}else{
 			cout << "---------------------------------->TOKEN NULL"<<endl;

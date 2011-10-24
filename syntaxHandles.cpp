@@ -39,7 +39,8 @@ class TerminalHandle: public Handle{
 		Token *token;
 	public:
 		TerminalHandle(Token *tokenValue);
-		void setUpHandle();		
+		void setUpHandle();	
+		Token* getToken();	
 };
 
 class NonTerminalHandle: public Handle{
@@ -246,6 +247,10 @@ void NonTerminalHandle::setUpHandle(){
 
 TerminalHandle::TerminalHandle(Token *tokenValue){
 	this->token = tokenValue;
+}
+
+Token* TerminalHandle::getToken(){
+	return this->token;
 }
 
 void TerminalHandle::setUpHandle(){
