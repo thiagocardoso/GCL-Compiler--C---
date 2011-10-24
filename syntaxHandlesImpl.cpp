@@ -138,12 +138,13 @@ void RelationalOperator6::createHandleList(){
 }
 
 void IndexOrComp::InnerSetup(){
-	this->setAllowEmpty(false);
+	//this->setAllowEmpty(false);
+	this->setAllowEmpty(true);
 	this->setHandleName("indexOrComp");
 }
 
 void IndexOrComp::createHandleList(){
-	IndexOrCompParts *handle;
+	NonTerminalHandle *handle;
 	IndexOrComp *handle2;
 	
 	handle = new IndexOrCompParts();
@@ -153,6 +154,7 @@ void IndexOrComp::createHandleList(){
 }
 
 void IndexOrCompParts::InnerSetup(){
+	cout << "******************* PASSOU AQUI*********************"<<endl;
 	this->setHandleName("indexOrCompParts");
 }
 

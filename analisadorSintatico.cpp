@@ -49,8 +49,8 @@ void AnalisadorSintatico::setUpGrammar(){
 	com.Execute();	
 	
 	//this->grammar.setSimboloInicial(new BooleanConstant());
-	this->grammar.setSimboloInicial(new RelationalOperator());
-	//this->grammar.setSimboloInicial(new IndexOrComp());
+	//this->grammar.setSimboloInicial(new RelationalOperator());
+	this->grammar.setSimboloInicial(new IndexOrComp());
 	this->grammar.getSimboloInicial()->setUpHandle();
 }
 
@@ -95,7 +95,7 @@ bool AnalisadorSintatico::ValidaHandle(Handle * handle){
 	NonTerminalHandle *ntHandle;
 		
 	if(handle->getType()==htNonTerminal){		
-		cout << "Entrou não terminal" <<endl;
+		cout << "Entrou não terminal: " << handle->getHandleName() <<endl;
 		
 		ntHandle = (NonTerminalHandle*)handle;
 		ntHandle->getList()->first();
@@ -117,36 +117,48 @@ bool AnalisadorSintatico::ValidaHandle(Handle * handle){
 		if (result){
 			this->pilhaToken.push_front(this->actualToken);
 			this->actualToken = this->anaLexico->getToken();
-		}
-		/*
+		}		
 		else{		
-			if (!ntHandle->getAllowEmpty()){
-				this->Erro("Token errado!");
+			//if (!ntHandle->getAllowEmpty()){
+			//	this->Erro("Token errado!");
+			//	this->actualToken = this->anaLexico->getToken();
+			//}
+			if (ntHandle->getAllowEmpty()){
+				result = true;
 				this->actualToken = this->anaLexico->getToken();
 			}
-			result = ntHandle->getAllowEmpty();
-		}
-		*/		
+			//result = ntHandle->getAllowEmpty();
+		}		
 	}else{
-		cout << "Entrou terminal" <<endl;
-		result = handle->getHandleName()== this->actualToken->getLexema();
+		cout << "Entrou terminal: " << this->actualToken->getLexema() << " Teste: " << handle->getHandleName() <<endl;
+		result = handle->getHandleName()==this->actualToken->getLexema();
 	}	
+	
+	if (result){
+		cout << "Reconheceu handle: " << handle->getHandleName() <<endl;
+	}else{
+		cout << "Não reconheceu handle: " << handle->getHandleName() <<endl;
+	}
+	
 	return result;
 }
 
 bool AnalisadorSintatico::ValidaProducoes(){
-	bool result = true;	
-	//Token* myToken;		
-	
-	//this->actualHandle = this->grammar.getSimboloInicial();	
+	bool result = true;		
+		
 	this->accept = true;
-	this->actualToken = this->anaLexico->getToken();
-	//this->pilhaToken.push_front(myToken);
-	while(!this->anaLexico->SourceEOF()){
-		result = this->ValidaHandle(this->grammar.getSimboloInicial());
-		this->accept = this->accept && result;
+	this->actualToken = this->anaLexico->getToken();	
+	while(((!this->anaLexico->SourceEOF())||(this->actualToken!=NULL))&&(result)){
+		cout << "----------------------------------entrou na validacao" <<endl;
+		result = this->ValidaHandle(this->grammar.getSimboloInicial());	
+		if(this->actualToken!=NULL){
+			cout << "---------------------------------->" << this->actualToken->getLexema() <<endl;
+		}else{
+			cout << "---------------------------------->TOKEN NULL"<<endl;
+		}
 	}
 	
+	this->accept = (this->anaLexico->SourceEOF()) && result;	
 	return this->accept;
 }
 
