@@ -121,27 +121,30 @@ bool AnalisadorSintatico::ValidaHandle(Handle * handle){
 			result = ntHandle->getAllowEmpty();			
 		}		
 	}else{
-		cout << "Entrou terminal: " << this->actualToken->getLexema() << " Teste: " << handle->getHandleName() <<endl;
-		//result = handle->getHandleName()==this->actualToken->getLexema();
-		tHandle = (TerminalHandle*)handle;
-		
-		switch (tHandle->getToken()->getTipo()){
-			case ttNumber:
-			case ttId:{
-				result = tHandle->getToken()->getTipo()==this->actualToken->getTipo();
-				break;
+		if (this->actualToken!=NULL){		
+			cout << "Entrou terminal: " << this->actualToken->getLexema() << " Teste: " << handle->getHandleName() <<endl;			
+			tHandle = (TerminalHandle*)handle;
+			
+			switch (tHandle->getToken()->getTipo()){
+				case ttNumber:
+				case ttId:{
+					result = tHandle->getToken()->getTipo()==this->actualToken->getTipo();
+					break;
+				}
+				case ttKeyword:
+				case ttSymbol:{
+					result = tHandle->getToken()->getLexema()==this->actualToken->getLexema();
+					break;
+				}			
 			}
-			case ttKeyword:
-			case ttSymbol:{
-				result = tHandle->getToken()->getLexema()==this->actualToken->getLexema();
-				break;
-			}
-		}
+		}else{
+			result = false;
+		}		
 	}	
 	
 	if (result){
 		this->pilhaToken.push_front(this->actualToken);
-		this->actualToken = this->anaLexico->getToken();
+		this->actualToken = this->anaLexico->getToken();		
 		cout << "Reconheceu handle: " << handle->getHandleName() <<endl;
 	}else{
 		Erro("Não reconheceu handle: " + handle->getHandleName());
@@ -159,8 +162,7 @@ bool AnalisadorSintatico::ValidaProducoes(){
 	while(((!this->anaLexico->SourceEOF())||(this->actualToken!=NULL))&&(result)){
 		cout << "----------------------------------entrou na validacao" <<endl;
 		if(this->actualToken!=NULL){
-			result = this->ValidaHandle(this->grammar.getSimboloInicial());			
-			cout << "---------------------------------->" << this->actualToken->getLexema() <<endl;
+			result = this->ValidaHandle(this->grammar.getSimboloInicial());						
 		}else{
 			cout << "---------------------------------->TOKEN NULL"<<endl;
 		}

@@ -166,7 +166,7 @@ void IndexOrCompParts2::createHandleList(){
 	Expression *exp = new Expression();
 	
 	this->getList()->addHandle(hFactory.getTerminalHandle("[", ttSymbol, "["));	
-	this->getList()->addHandle(exp);	
+	//this->getList()->addHandle(exp);	
 	this->getList()->addHandle(hFactory.getTerminalHandle("]", ttSymbol, "]"));
 }
 
