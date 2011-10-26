@@ -1,92 +1,75 @@
 #include <iostream>
 #include <string>
+#include <list>
 using namespace std;
 
-class Node {
+class Node{
 	private:
-		string Name;
-		Node *LeftChild;
-		Node *RightChild;
-		
+		std::list<Node*> nodeList;
+		std::list<Node*>::iterator it;
+		Handle* handle;
+		Token* token;
+		Node* parentNode;
 	public:
-		void setName(string Value);
-		void setLeftChild(Node *node);
-		void setRightChild(Node *node);		
-		string getName(); 
-		Node* getLeftChild();
-		Node* getRightChild();
-		void AddLeftChild(string Name);
-		void AddRightChild(string Name);
-		bool HasLeftChild();
-		bool HasRightChild();
+		Node(Handle* handle);
+		void insertChild(Node* aNode);
+		void firstChild();
+		void nextChild();
+		void lastChild();
+		void priorChild();
+		Node* getParentNode();
+		Node* getChild();		
+		void setParentNode(Node* parent);	
+		Handle* getHandle();
+		Token* getToken();		
+		void setToken(Token* token);	
 };
 
-void Node::setName(string Value)
-{
-	this->Name = Value;
+Node::Node(Handle* handle){
+	this->it = nodeList.begin();
+	this->handle = handle;	
 }
 
-void Node::setLeftChild(Node *node)
-{
-	this->LeftChild = node;
+void Node::setToken(Token* token){
+	this->token = token;
 }
 
-void Node::setRightChild(Node *node)
-{
-	this->RightChild = node;
-}
-		
-string Node::getName()
-{
-	return this->Name;
-}
- 
-Node* Node::getLeftChild()
-{
-	return this->LeftChild;
+Handle* Node::getHandle(){
+	return this->handle;
 }
 
-Node* Node::getRightChild()
-{
-	return this->RightChild;
+void Node::insertChild(Node* aNode){
+	this->nodeList.push_back(aNode);
 }
 
-void Node::AddLeftChild(string Name)
-{	
-	Node *node;
-	
-	if (not(this->HasLeftChild())){	
-		node = new Node();
-		node->setName(Name);
-		this->setLeftChild(node);
-	}
+void Node::firstChild(){
+	this->it = this->nodeList.begin();
 }
 
-void Node::AddRightChild(string Name)
-{
-	Node *node;
-	
-	if (not(this->HasLeftChild())){	
-		node = new Node();
-		node->setName(Name);
-		this->setRightChild(node);
-	}
+void Node::nextChild(){
+	this->it++;
 }
 
-bool Node::HasLeftChild()
-{
-	if (this->LeftChild == NULL)
-		return false;
-	else
-		return true;
-	//return this->LeftChild != NULL;
+void Node::lastChild(){
+	this->it = this->nodeList.end();
 }
 
-bool Node::HasRightChild()
-{
-	if (this->RightChild == NULL)
-		return false;
-	else
-		return true;
-	//return this->RightChild != NULL;
+void Node::priorChild(){
+	this->it--;
+}
+
+Node* Node::getParentNode(){
+	return this->parentNode;
+}
+
+void Node::setParentNode(Node* parent){
+	this->parentNode = parent;
+}
+
+Node* Node::getChild(){
+	std::list<Node*>::iterator elem;
+
+	elem = this->it;
+
+	return *elem;		
 }

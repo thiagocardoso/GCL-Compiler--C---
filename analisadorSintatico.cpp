@@ -4,6 +4,7 @@
 //#include "producao.cpp"
 #include "syntaxHandles.cpp"
 #include "syntaxHandlesImpl.cpp"
+#include "node.cpp"
 using namespace std;
 
 class ArvoreSintaticaAbstrata {
@@ -19,10 +20,10 @@ class AnalisadorSintatico {
 		bool accept;
 		bool error;
 		std::list<Token*> pilhaToken;
-		
+		Node* rootNode;		
 		void setUpGrammar();
 	protected:
-		bool ValidaHandle(Handle * handle);
+		bool ValidaHandle(Handle * handle, Node* parentNode);
 	public:
 		AnalisadorSintatico(string caminhoArquivo);
 		~AnalisadorSintatico();
@@ -90,10 +91,11 @@ void AnalisadorSintatico::ListaHandles(){
 	this->grammar.printHandleList();	
 }
 
-bool AnalisadorSintatico::ValidaHandle(Handle * handle){
+bool AnalisadorSintatico::ValidaHandle(Handle * handle, Node* parentNode){
 	bool result = true;
 	NonTerminalHandle *ntHandle;
 	TerminalHandle *tHandle;
+	Node* newNode = new Node(handle);
 	
 	handle->setUpHandle();
 		
@@ -103,7 +105,7 @@ bool AnalisadorSintatico::ValidaHandle(Handle * handle){
 		ntHandle = (NonTerminalHandle*)handle;
 		ntHandle->getList()->first();
 		while((!ntHandle->getList()->eof())&&(result)){
-			result = ValidaHandle(ntHandle->getList()->getHandle());		
+			result = ValidaHandle(ntHandle->getList()->getHandle(), newNode);		
 			
 			ntHandle->getList()->nextHandle();
 		}
@@ -111,7 +113,7 @@ bool AnalisadorSintatico::ValidaHandle(Handle * handle){
 		if (!result){
 			ntHandle->getOtherList()->first();
 			while((!ntHandle->getOtherList()->eof())&&(!result)){
-				result = ValidaHandle(ntHandle->getOtherList()->getHandle());
+				result = ValidaHandle(ntHandle->getOtherList()->getHandle(), newNode);
 				
 				ntHandle->getOtherList()->nextHandle();
 			}
@@ -137,14 +139,20 @@ bool AnalisadorSintatico::ValidaHandle(Handle * handle){
 					break;
 				}			
 			}
+			
+			newNode->setToken(this->actualToken);
 		}else{
 			result = false;
 		}		
 	}	
 	
 	if (result){
-		this->pilhaToken.push_front(this->actualToken);
-		this->actualToken = this->anaLexico->getToken();		
+		this->pilhaToken.push_front(this->actualToken);			
+		this->actualToken = this->anaLexico->getToken();				
+		
+		newNode->setParentNode(parentNode);			
+		parentNode->insertChild(newNode);		
+		
 		cout << "Reconheceu handle: " << handle->getHandleName() <<endl;
 	}else{
 		Erro("Não reconheceu handle: " + handle->getHandleName());
@@ -156,13 +164,17 @@ bool AnalisadorSintatico::ValidaHandle(Handle * handle){
 
 bool AnalisadorSintatico::ValidaProducoes(){
 	bool result = true;		
+	
+	if (this->rootNode==NULL){
+		this->rootNode = new Node(this->grammar.getSimboloInicial());
+	}
 		
 	this->accept = true;
 	this->actualToken = this->anaLexico->getToken();	
 	while(((!this->anaLexico->SourceEOF())||(this->actualToken!=NULL))&&(result)){
 		cout << "----------------------------------entrou na validacao" <<endl;
 		if(this->actualToken!=NULL){
-			result = this->ValidaHandle(this->grammar.getSimboloInicial());						
+			result = this->ValidaHandle(this->grammar.getSimboloInicial(), this->rootNode);						
 		}else{
 			cout << "---------------------------------->TOKEN NULL"<<endl;
 		}
