@@ -23,11 +23,13 @@ class Node{
 		Handle* getHandle();
 		Token* getToken();		
 		void setToken(Token* token);	
+		bool eof();
 };
 
 Node::Node(Handle* handle){
 	this->it = nodeList.begin();
-	this->handle = handle;	
+	this->handle = handle;
+	this->token = NULL;	
 }
 
 void Node::setToken(Token* token){
@@ -38,12 +40,20 @@ Handle* Node::getHandle(){
 	return this->handle;
 }
 
+Token* Node::getToken(){
+	return this->token;
+}	
+
 void Node::insertChild(Node* aNode){
 	this->nodeList.push_back(aNode);
 }
 
 void Node::firstChild(){
 	this->it = this->nodeList.begin();
+}
+
+bool Node::eof(){
+	return this->it==nodeList.end();
 }
 
 void Node::nextChild(){

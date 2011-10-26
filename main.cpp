@@ -10,6 +10,8 @@ void Executa(string fileName){
 
 	if (analSint.ValidaProducoes()){
 		cout << "Reconheceu!"<<endl;
+		cout << endl;
+		analSint.printArvoreSintatica();
 	}else{
 		cout << "Erro!"<<endl;
 	}

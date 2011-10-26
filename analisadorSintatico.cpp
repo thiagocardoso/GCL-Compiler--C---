@@ -13,7 +13,7 @@ class ArvoreSintaticaAbstrata {
 class AnalisadorSintatico {
 	private:
 		Gramatica grammar;
-		ArvoreSintaticaAbstrata arvore;
+		//ArvoreSintaticaAbstrata arvore;
 		AnalisadorLexico *anaLexico;
 		Handle * actualHandle;
 		Token * actualToken;
@@ -24,14 +24,16 @@ class AnalisadorSintatico {
 		void setUpGrammar();
 	protected:
 		bool ValidaHandle(Handle * handle, Node* parentNode);
+		void printNodes(Node* actual, int nivel);
 	public:
 		AnalisadorSintatico(string caminhoArquivo);
 		~AnalisadorSintatico();
-		ArvoreSintaticaAbstrata getArvoreSintatica();
+		Node* getArvoreSintatica();
 		void GeraArvoreSintatica();
 		void ListaHandles();
 		bool ValidaProducoes();
 		void Erro(string Message);
+		void printArvoreSintatica();		
 };
 
 AnalisadorSintatico::AnalisadorSintatico(string caminhoArquivo){	
@@ -55,8 +57,46 @@ void AnalisadorSintatico::setUpGrammar(){
 	this->grammar.getSimboloInicial()->setUpHandle();
 }
 
-ArvoreSintaticaAbstrata AnalisadorSintatico::getArvoreSintatica(){
-	return arvore;
+Node* AnalisadorSintatico::getArvoreSintatica(){
+	return rootNode;
+}
+
+void AnalisadorSintatico::printNodes(Node* actual, int nivel){
+	int i;
+	bool bloco = false;
+
+	if(actual!=NULL){
+		for(i=0;i<nivel;i++){
+			cout << " | ";
+		}
+		cout << " Handle: \"" << actual->getHandle()->getHandleName()<< "\" ";
+		
+		if (actual->getToken()!=NULL){
+			cout << "Token: \"" << actual->getToken()->getLexema() << "\" ";
+		}	
+		
+		cout <<endl;
+		
+		actual->firstChild();
+		while(!actual->eof()){
+			bloco = true;
+			printNodes(actual->getChild(), nivel+1);
+			
+			actual->nextChild();
+		}
+		
+		if(bloco){
+			for(i=0;i<nivel;i++){
+			cout << " | ";
+			}
+			
+			cout << " |_____________" <<endl;
+		}
+	}
+}
+
+void AnalisadorSintatico::printArvoreSintatica(){
+	this->printNodes(this->rootNode,0);
 }
 
 void AnalisadorSintatico::GeraArvoreSintatica(){
@@ -100,7 +140,7 @@ bool AnalisadorSintatico::ValidaHandle(Handle * handle, Node* parentNode){
 	handle->setUpHandle();
 		
 	if(handle->getType()==htNonTerminal){		
-		cout << "Entrou não terminal: " << handle->getHandleName() <<endl;
+		//cout << "Entrou não terminal: " << handle->getHandleName() <<endl;
 		
 		ntHandle = (NonTerminalHandle*)handle;
 		ntHandle->getList()->first();
@@ -124,7 +164,7 @@ bool AnalisadorSintatico::ValidaHandle(Handle * handle, Node* parentNode){
 		}		
 	}else{
 		if (this->actualToken!=NULL){		
-			cout << "Entrou terminal: " << this->actualToken->getLexema() << " Teste: " << handle->getHandleName() <<endl;			
+			//cout << "Entrou terminal: " << this->actualToken->getLexema() << " Teste: " << handle->getHandleName() <<endl;			
 			tHandle = (TerminalHandle*)handle;
 			
 			switch (tHandle->getToken()->getTipo()){
@@ -148,36 +188,34 @@ bool AnalisadorSintatico::ValidaHandle(Handle * handle, Node* parentNode){
 	
 	if (result){
 		this->pilhaToken.push_front(this->actualToken);			
-		this->actualToken = this->anaLexico->getToken();				
 		
 		newNode->setParentNode(parentNode);			
-		parentNode->insertChild(newNode);		
+		parentNode->insertChild(newNode);	
 		
-		cout << "Reconheceu handle: " << handle->getHandleName() <<endl;
+		this->actualToken = this->anaLexico->getToken();							
+		
+		//cout << "Reconheceu handle: " << handle->getHandleName() <<endl;
 	}else{
 		Erro("Não reconheceu handle: " + handle->getHandleName());
-		cout << "Não reconheceu handle: " << handle->getHandleName() <<endl;
+		//cout << "Não reconheceu handle: " << handle->getHandleName() <<endl;
 	}
 	
 	return result;
 }
 
 bool AnalisadorSintatico::ValidaProducoes(){
-	bool result = true;		
-	
-	if (this->rootNode==NULL){
-		this->rootNode = new Node(this->grammar.getSimboloInicial());
-	}
+	bool result = true;			
+	this->rootNode = new Node(this->grammar.getSimboloInicial());	
 		
 	this->accept = true;
 	this->actualToken = this->anaLexico->getToken();	
 	while(((!this->anaLexico->SourceEOF())||(this->actualToken!=NULL))&&(result)){
-		cout << "----------------------------------entrou na validacao" <<endl;
-		if(this->actualToken!=NULL){
+		//cout << "----------------------------------entrou na validacao" <<endl;
+		//if(this->actualToken!=NULL){
 			result = this->ValidaHandle(this->grammar.getSimboloInicial(), this->rootNode);						
-		}else{
-			cout << "---------------------------------->TOKEN NULL"<<endl;
-		}
+		//}else{
+		//	cout << "---------------------------------->TOKEN NULL"<<endl;
+		//}
 	}
 	
 	this->accept = (this->anaLexico->SourceEOF()) && result;	
