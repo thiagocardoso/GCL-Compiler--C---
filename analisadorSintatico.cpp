@@ -135,7 +135,7 @@ bool AnalisadorSintatico::ValidaHandle(Handle * handle, Node* parentNode){
 	bool result = true;
 	NonTerminalHandle *ntHandle;
 	TerminalHandle *tHandle;
-	Node* newNode = new Node(handle);
+	Node* newNode = new Node(handle);	
 	
 	handle->setUpHandle();
 		
@@ -159,8 +159,8 @@ bool AnalisadorSintatico::ValidaHandle(Handle * handle, Node* parentNode){
 			}
 		}
 		
-		if (!result){
-			result = ntHandle->getAllowEmpty();			
+		if (!result){			
+			result = ntHandle->getAllowEmpty();						
 		}		
 	}else{
 		if (this->actualToken!=NULL){		
@@ -188,9 +188,9 @@ bool AnalisadorSintatico::ValidaHandle(Handle * handle, Node* parentNode){
 	
 	if (result){
 		this->pilhaToken.push_front(this->actualToken);			
-		
+				
 		newNode->setParentNode(parentNode);			
-		parentNode->insertChild(newNode);	
+		parentNode->insertChild(newNode);					
 		
 		this->actualToken = this->anaLexico->getToken();							
 		

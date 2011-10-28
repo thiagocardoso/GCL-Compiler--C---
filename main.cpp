@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include "analisadorSintatico.cpp"
+#include "analisadorSemantico.cpp"
 using namespace std;
 
 void Executa(string fileName){
