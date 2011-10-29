@@ -128,12 +128,27 @@ class MultiplyOperator3: public MultiplyOperator{
 		void createHandleList();
 };
 
+class AddingOperator: public NonTerminalHandle{
+	public:
+		void InnerSetup();
+		void createHandleList();
+};
+
+class AddingOperator2: public AddingOperator{
+	public:
+		void createHandleList();
+
+};
+
 
 // Implementação
 
 void RegisterHandlesCommand::Execute(){
 	//this->grammar->registerHandle(new BooleanConstant());
-	this->grammar->registerHandle(new RelationalOperator());	
+	//this->grammar->registerHandle(new RelationalOperator());	
+	//this->grammar->registerHandle(new VariableMore());     	* Testar com as outras produções*
+	//this->grammar->registerHandle(new VariableAccess());
+	this->grammar->registerHandle(new AddingOperator());	
 };
 
 void RegisterHandlesCommand::setGrammar(Gramatica * grammarValue){
@@ -315,4 +330,18 @@ void MultiplyOperator2::createHandleList(){
 void MultiplyOperator3::createHandleList(){
 	HandleFactory hFactory;
 	this->getList()->addHandle(hFactory.getTerminalHandle("\\",ttSymbol,"\\"));
+};
+
+void AddingOperator::InnerSetup(){
+	this->setHandleName("addingOperator");
+};
+
+void AddingOperator::createHandleList(){
+	HandleFactory hFactory;
+	this->getList()->addHandle(hFactory.getTerminalHandle("+",ttSymbol,"+"));
+};
+
+void AddingOperator2::createHandleList(){
+	HandleFactory hFactory;
+	this->getList()->addHandle(hFactory.getTerminalHandle("-",ttSymbol,"-"));
 };
