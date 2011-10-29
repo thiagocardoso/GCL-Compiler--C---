@@ -10,7 +10,6 @@ class RegisterHandlesCommand {
 
 class Expression: public NonTerminalHandle {
 	public:
-		void InnerSetup();
 		void createHandleList();
 };
 
@@ -73,34 +72,93 @@ class RelationalOperator6: public RelationalOperator {
 		void createHandleList();
 };
 
+class VariableMore: public NonTerminalHandle{
+	public: 
+		void InnerSetup();
+		void createHandleList();	
+};
+
+class VariableMore2: public VariableMore{
+	public:
+		void createHandleList();
+};
+
+class VariableMore3: public VariableMore{
+	public:
+		void createHandleList();
+};
+
+class VariableMore4: public VariableMore{
+	public:
+		void createHandleList();
+};
+
+class NextItem: public NonTerminalHandle{
+	public:
+		void createHandleList();	
+};
+
+class VariableAccess: public NonTerminalHandle{
+	public:
+		void InnerSetup();
+		void createHandleList();
+};
+
+class ConstantName: public NonTerminalHandle {
+	public:
+		void InnerSetup();
+		void createHandleList();
+
+};
+
+class MultiplyOperator: public NonTerminalHandle {
+	public:
+		void InnerSetup();
+		void createHandleList();
+};
+
+
+class MultiplyOperator2: public MultiplyOperator{
+	public:
+		void createHandleList();
+};
+
+class MultiplyOperator3: public MultiplyOperator{
+	public:
+		void createHandleList();
+};
+
+
+// Implementação
+
 void RegisterHandlesCommand::Execute(){
 	//this->grammar->registerHandle(new BooleanConstant());
 	this->grammar->registerHandle(new RelationalOperator());	
-}
+};
 
 void RegisterHandlesCommand::setGrammar(Gramatica * grammarValue){
 	this->grammar = grammarValue;
-}
+};
 
 void BooleanConstant::InnerSetup(){
 	this->setHandleName("booleanConstant");	
-}
+};
 
 void BooleanConstant::createHandleList(){
 	HandleFactory hFactory;		
 	this->getList()->addHandle(hFactory.getTerminalHandle("True", ttKeyword, "True"));
 	
 	this->getOtherList()->addHandle(new BooleanConstant2);	
-}
+};
 
 void BooleanConstant2::createHandleList(){
 	HandleFactory hFactory;		
 	this->getList()->addHandle(hFactory.getTerminalHandle("False", ttKeyword, "False"));		
-}
+};
 
 void RelationalOperator::InnerSetup(){
 	this->setHandleName("relationalOperator");
-}
+};
 
 void RelationalOperator::createHandleList(){
 	HandleFactory hFactory;		
@@ -111,47 +169,47 @@ void RelationalOperator::createHandleList(){
 	this->getOtherList()->addHandle(new RelationalOperator4);
 	this->getOtherList()->addHandle(new RelationalOperator5);
 	this->getOtherList()->addHandle(new RelationalOperator6);
-}
+};
 
 void RelationalOperator2::createHandleList(){
 	HandleFactory hFactory;		
 	this->getList()->addHandle(hFactory.getTerminalHandle("=", ttSymbol, "="));
-}
+};
 
 void RelationalOperator3::createHandleList(){
 	HandleFactory hFactory;		
 	this->getList()->addHandle(hFactory.getTerminalHandle(">", ttSymbol, ">"));
-}
+};
 
 void RelationalOperator4::createHandleList(){
 	HandleFactory hFactory;		
 	this->getList()->addHandle(hFactory.getTerminalHandle("<=", ttSymbol, "<="));
-}
+};
 
 void RelationalOperator5::createHandleList(){
 	HandleFactory hFactory;		
 	this->getList()->addHandle(hFactory.getTerminalHandle(">=", ttSymbol, ">="));
-}
+};
 
 void RelationalOperator6::createHandleList(){
 	HandleFactory hFactory;		
 	this->getList()->addHandle(hFactory.getTerminalHandle("#", ttSymbol, "#"));
-}
+};
 
 void IndexOrComp::InnerSetup(){
 	//this->setAllowEmpty(false);
 	this->setAllowEmpty(true);
 	this->setHandleName("indexOrComp");
-}
+};
 
 void IndexOrComp::createHandleList(){
 	this->getList()->addHandle(new IndexOrCompParts());
 	this->getList()->addHandle(new IndexOrComp());
-}
+};
 
 void IndexOrCompParts::InnerSetup(){	
 	this->setHandleName("indexOrCompParts");
-}
+};
 
 void IndexOrCompParts::createHandleList(){
 	HandleFactory hFactory;			
@@ -159,21 +217,102 @@ void IndexOrCompParts::createHandleList(){
 	this->getList()->addHandle(hFactory.getTerminalHandle("Number", ttNumber, "0"));
 	
 	this->getOtherList()->addHandle(new IndexOrCompParts2);	
-}
+};
 
 void IndexOrCompParts2::createHandleList(){
 	HandleFactory hFactory;		
 	Expression *exp = new Expression();
 	
 	this->getList()->addHandle(hFactory.getTerminalHandle("[", ttSymbol, "["));	
-	//this->getList()->addHandle(exp);	
+//	this->getList()->addHandle(exp);	
 	this->getList()->addHandle(hFactory.getTerminalHandle("]", ttSymbol, "]"));
-}
-
-void Expression::InnerSetup(){
-	this->setAllowEmpty(true);
-}
+};
 
 void Expression::createHandleList(){
-}
+};
 
+void VariableMore::InnerSetup(){
+	this-> setHandleName("variableMore");
+};
+
+void VariableMore::createHandleList(){
+	HandleFactory hFactory;
+	
+	this->getList()->addHandle(hFactory.getTerminalHandle("\"",ttSymbol,"\""));
+	this->getList()->addHandle(hFactory.getTerminalHandle("\"",ttSymbol,"\""));
+	
+	this->getList()->addHandle(new VariableMore2);
+	this->getList()->addHandle(new VariableMore3);
+	this->getList()->addHandle(new VariableMore4);
+};
+
+void VariableMore2::createHandleList(){
+	HandleFactory hFactory;
+	Expression * exp = new Expression();
+	IndexOrComp *indexOrComp = new IndexOrComp();
+	
+	this->getList()->addHandle(hFactory.getTerminalHandle("[",ttSymbol,"["));
+	this->getList()->addHandle(exp);
+	this->getList()->addHandle(hFactory.getTerminalHandle("]",ttSymbol,"]"));
+	this->getList()->addHandle(indexOrComp);
+};
+
+void VariableMore3::createHandleList(){
+	HandleFactory hFactory;
+	IndexOrComp *indexOrComp = new IndexOrComp();
+	NextItem *nextItem = new NextItem();
+	
+	
+	this->getList()->addHandle(hFactory.getTerminalHandle(".",ttSymbol,"."));
+	this->getList()->addHandle(nextItem);
+	this->getList()->addHandle(indexOrComp);
+	this->getList()->addHandle(hFactory.getTerminalHandle("Number",ttNumber,"0"));
+};
+
+void VariableMore4::createHandleList(){
+	HandleFactory hFactory;
+//	this.getList->addHandle(hFactory.getTerminalHandle("ident"))
+};
+
+void NextItem::createHandleList(){
+};	
+
+void VariableAccess::InnerSetup(){
+	this->setHandleName("VariableAccess");
+};
+
+void VariableAccess::createHandleList(){
+	HandleFactory hFactory;
+	VariableMore * varMore = new VariableMore();
+	this->getList()->addHandle(hFactory.getTerminalHandle("ident",ttId,"ident")); 
+	this->getList()->addHandle(varMore);
+};
+
+void ConstantName::InnerSetup(){
+	this->setHandleName("constantName");
+};
+
+void ConstantName::createHandleList(){
+	HandleFactory hFactory;
+	this->getList()->addHandle(hFactory.getTerminalHandle("ident",ttId,"ident"));
+};
+
+void MultiplyOperator::InnerSetup(){
+	this->setHandleName("multiplyOperator");
+	
+};
+
+void MultiplyOperator::createHandleList(){
+	HandleFactory hFactory;
+	this->getList()->addHandle(hFactory.getTerminalHandle("*",ttSymbol,"*"));
+};
+
+void MultiplyOperator2::createHandleList(){
+	HandleFactory hFactory;
+	this->getList()->addHandle(hFactory.getTerminalHandle("/",ttSymbol,"/"));
+};
+
+void MultiplyOperator3::createHandleList(){
+	HandleFactory hFactory;
+	this->getList()->addHandle(hFactory.getTerminalHandle("\\",ttSymbol,"\\"));
+};
