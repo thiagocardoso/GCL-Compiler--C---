@@ -1,1 +1,10 @@
-.5
+module search  
+private 
+	const size = 10;  
+	typedef integer range [1..size] sizer;
+	typedef integer array [sizer] elements;
+	
+begin   
+  	forall j -> read A[j]; llarof; 
+	read x;  
+end.  

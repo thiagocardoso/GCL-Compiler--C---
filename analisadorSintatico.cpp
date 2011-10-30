@@ -53,7 +53,8 @@ void AnalisadorSintatico::setUpGrammar(){
 	
 	//this->grammar.setSimboloInicial(new BooleanConstant());
 	//this->grammar.setSimboloInicial(new RelationalOperator());
-	this->grammar.setSimboloInicial(new IndexOrComp());
+	//this->grammar.setSimboloInicial(new IndexOrComp());
+	this->grammar.setSimboloInicial(new Program());
 	this->grammar.getSimboloInicial()->setUpHandle();
 }
 
