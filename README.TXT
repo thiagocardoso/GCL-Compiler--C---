@@ -1,0 +1,1 @@
+Compilador GCL desenvolvido para fins acadêmicos.
