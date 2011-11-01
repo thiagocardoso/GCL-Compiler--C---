@@ -29,6 +29,7 @@ class HandleList{
 		void priorHandle();
 		void first();
 		void last();
+		void clear();
 		bool eof();
 		Handle* getHandle();
 		std::list<Handle*>::iterator getIterator();
@@ -168,6 +169,10 @@ void HandleList::first(){
 	this->it = this->list.begin();
 }
 
+void HandleList::clear(){
+     this->list.clear();
+}
+
 void HandleList::last(){
 	this->it = this->list.end();
 	this->it--;
@@ -233,6 +238,8 @@ string NonTerminalHandle::getProduction(){
 }
 
 void NonTerminalHandle::setUpHandle(){
+    this->list.clear();
+     
 	this->setAllowEmpty(false);
 	this->setType(htNonTerminal);
 	this->InnerSetup();

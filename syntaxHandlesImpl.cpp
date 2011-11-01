@@ -1219,12 +1219,13 @@ void Modules::InnerSetup(){
 
 void Modules::createHandleList(){
 	this->getList()->addHandle(new Module);	
+	this->getList()->addHandle(new Modules);
 	
-	this->getOtherList()->addHandle(new Modules2);		
+//	this->getOtherList()->addHandle(new Modules2);		
 }
 
 void Modules2::createHandleList(){
-	this->getList()->addHandle(new Modules);
+	//this->getList()->addHandle(new Modules);
 }
 
 void ModuleOpt::InnerSetup(){
@@ -1293,7 +1294,7 @@ void Definition2::createHandleList(){
 }
 
 void Definition3::createHandleList(){	
-	this->getList()->addHandle(new ProcedureDef);	
+	//this->getList()->addHandle(new ProcedureDef);	
 }
 
 void Definition4::createHandleList(){	
@@ -1301,7 +1302,7 @@ void Definition4::createHandleList(){
 }
 
 void Definition5::createHandleList(){	
-	this->getList()->addHandle(new ProcedureDecl);	
+//	this->getList()->addHandle(new ProcedureDecl);	
 }
 
 void ConstantDef::InnerSetup(){
@@ -1487,7 +1488,7 @@ void VariableListParts::createHandleList(){
 	this->getList()->addHandle(hFactory.getTerminalHandle(",",ttSymbol,","));
 	this->getList()->addHandle(hFactory.getTerminalHandle("Ident",ttId,"Ident"));	
 	
-	this->getOtherList()->addHandle(new VariableListParts2);
+	//this->getOtherList()->addHandle(new VariableListParts2);
 }
 
 void VariableListParts2::createHandleList(){		

@@ -82,11 +82,17 @@ Token* AnalisadorLexico::getToken(){
 	while ((this->ReadBuf.IsFileGood())and(not(this->ValidToken))){	
 		this->Automato(this->ReadBuf.getChar());
 	}
+
+    if((!this->ReadBuf.IsFileGood())&&(!this->ReadBuf.IsBufferWriteEmpty())){
+       this->TokenFound();       
+    }
 	
 	if (this->ValidToken){
 		returnToken = tkFactory.getToken(this->CurrentTokenType, 
 			this->ReadBuf.getBuffer(), this->ReadBuf.getLineNumber(), 
 			(this->ReadBuf.getColNumber() - (this->ReadBuf.getBuffer().size()-2)));
+			
+		this->ReadBuf.ClearBuffer();
 	}
 	
 	this->ValidToken = false;

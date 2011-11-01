@@ -193,7 +193,11 @@ bool AnalisadorSintatico::ValidaHandle(Handle * handle, Node* parentNode){
 		newNode->setParentNode(parentNode);			
 		parentNode->insertChild(newNode);					
 		
-		this->actualToken = this->anaLexico->getToken();							
+		if(handle->getType()==htTerminal){
+          if(!this->anaLexico->SourceEOF()){                                          
+             this->actualToken = this->anaLexico->getToken();							
+          }
+        }
 		
 		//cout << "Reconheceu handle: " << handle->getHandleName() <<endl;
 	}else{
@@ -210,14 +214,14 @@ bool AnalisadorSintatico::ValidaProducoes(){
 		
 	this->accept = true;
 	this->actualToken = this->anaLexico->getToken();	
-	while(((!this->anaLexico->SourceEOF())||(this->actualToken!=NULL))&&(result)){
+//	while(((!this->anaLexico->SourceEOF())||(this->actualToken!=NULL))&&(result)){
 		//cout << "----------------------------------entrou na validacao" <<endl;
 		//if(this->actualToken!=NULL){
 			result = this->ValidaHandle(this->grammar.getSimboloInicial(), this->rootNode);						
 		//}else{
 		//	cout << "---------------------------------->TOKEN NULL"<<endl;
 		//}
-	}
+//	}
 	
 	this->accept = (this->anaLexico->SourceEOF()) && result;	
 	return this->accept;

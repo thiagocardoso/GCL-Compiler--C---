@@ -1,10 +1,15 @@
-module search  
-private 
-	const size = 10;  
-	typedef integer range [1..size] sizer;
-	typedef integer array [sizer] elements;
-	
-begin   
-  	forall j -> read A[j]; llarof; 
-	read x;  
-end.  
+module search
+const ABC = 30;
+.
+
+module search2
+const ABC = 40;
+.
+
+module search3
+const ABC = 50;
+.
+
+module search4
+const ABC = 60;
+.

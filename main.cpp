@@ -12,10 +12,12 @@ void Executa(string fileName){
 	if (analSint.ValidaProducoes()){
 		cout << "Reconheceu!"<<endl;
 		cout << endl;
-		analSint.printArvoreSintatica();
+		analSint.printArvoreSintatica();		
 	}else{
 		cout << "Erro!"<<endl;
-	}
+    }
+    
+    //		system("pause");
 }
 
 int main(int argc, char** argv){
