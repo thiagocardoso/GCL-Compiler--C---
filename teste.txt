@@ -4,4 +4,9 @@ private
 	const CDE = 10;
 begin
 	read x;
+	a := 10;
+	b := 10+5;
+	c := a+b;
+	
+	write c;
 end.

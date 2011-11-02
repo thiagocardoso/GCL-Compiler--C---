@@ -273,6 +273,7 @@ class WriteItemParts:public NonTerminalHandle{
 
 class WriteItemParts2:public WriteItemParts{
 	public:
+		void InnerSetup();           
 		void createHandleList();
 };
 
@@ -1033,6 +1034,7 @@ void SimpleExpression::createHandleList(){
 }
 
 void SimpleExpression2::createHandleList(){
+  	this->getList()->addHandle(new Term);
 	this->getList()->addHandle(new SimpleExprParts);
 }
 
@@ -1127,14 +1129,19 @@ void WriteItemParts::InnerSetup(){
 
 void WriteItemParts::createHandleList(){
 	this->getList()->addHandle(new WriteItem);
-	this->getOtherList()->addHandle(new WriteItemParts2);
+	this->getList()->addHandle(new WriteItemParts2);
+}
+
+void WriteItemParts2::InnerSetup(){
+	this->setHandleName("writeItemParts2");
+	this->setAllowEmpty(true);
 }
 
 void WriteItemParts2::createHandleList(){
 	HandleFactory hFactory;
+    this->getList()->addHandle(hFactory.getTerminalHandle(",",ttSymbol,","));
 	this->getList()->addHandle(new WriteItem);
-	this->getList()->addHandle(hFactory.getTerminalHandle(",",ttSymbol,","));
-	this->getList()->addHandle(new WriteItemParts);
+	this->getList()->addHandle(new WriteItemParts2);
 }
 
 void WriteItem::InnerSetup(){
@@ -1143,6 +1150,7 @@ void WriteItem::InnerSetup(){
 
 void WriteItem::createHandleList(){
 	this->getList()->addHandle(new StringConst);
+	this->getOtherList()->addHandle(new WriteItem2);
 }
 
 void WriteItem2::createHandleList(){
@@ -1608,7 +1616,8 @@ void StatementParts::createHandleList(){
 	this->getList()->addHandle(new Statement);
 	this->getList()->addHandle(hFactory.getTerminalHandle(";",ttSymbol,";"));	
 	
-	this->getOtherList()->addHandle(new StatementParts2);
+	this->getList()->addHandle(new StatementParts2);
+//	this->getOtherList()->addHandle(new StatementParts2);
 }
 
 void StatementParts2::createHandleList(){	
