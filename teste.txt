@@ -2,6 +2,8 @@ module search
 const ABC = 30;
 private
 	const CDE = 10;
+	typedef Integer range [1..size] sizer;
+	typedef Integer array [sizer] elements;
 	Integer x;
 	String y;
 	Real w;

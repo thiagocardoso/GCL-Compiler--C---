@@ -717,6 +717,12 @@ class Expression2: public Expression {
 		void createHandleList();
 };
 
+class Constant: public NonTerminalHandle {
+	public:		
+		void InnerSetup();
+		void createHandleList();
+};
+
 // ImplementaÃ§Ã£o
 
 void RegisterHandlesCommand::Execute(){
@@ -1310,11 +1316,11 @@ void Definition2::createHandleList(){
 }
 
 void Definition3::createHandleList(){	
-	//this->getList()->addHandle(new ProcedureDef);	
+	this->getList()->addHandle(new TypeDef);
 }
 
 void Definition4::createHandleList(){	
-	this->getList()->addHandle(new TypeDef);	
+//   this->getList()->addHandle(new ProcedureDef);		
 }
 
 void Definition5::createHandleList(){	
@@ -1459,9 +1465,9 @@ void ArrayParts::createHandleList(){
 	this->getList()->addHandle(hFactory.getTerminalHandle("[",ttSymbol,"["));
 	this->getList()->addHandle(hFactory.getTerminalHandle("Ident",ttId,"Ident"));
 	this->getList()->addHandle(hFactory.getTerminalHandle("]",ttSymbol,"]"));	
-	//this->getList()->addHandle(new ArrayParts2);	
+	this->getList()->addHandle(new ArrayParts);	
 	
-	this->getOtherList()->addHandle(new ArrayParts2);
+//	this->getOtherList()->addHandle(new ArrayParts2);
 }
 
 void ArrayParts2::createHandleList(){	
@@ -1476,12 +1482,12 @@ void RangeType::createHandleList(){
 	HandleFactory hFactory;
 	this->getList()->addHandle(hFactory.getTerminalHandle("range",ttKeyword,"range"));
 	this->getList()->addHandle(hFactory.getTerminalHandle("[",ttSymbol,"["));
-	//this->getList()->addHandle(new Constant);
-	this->getList()->addHandle(hFactory.getTerminalHandle("Number",ttNumber,"0"));
+	this->getList()->addHandle(new Constant);
+//	this->getList()->addHandle(hFactory.getTerminalHandle("Number",ttNumber,"0"));
 	this->getList()->addHandle(hFactory.getTerminalHandle("..",ttSymbol,".."));
-	//this->getList()->addHandle(new Constant);
-	this->getList()->addHandle(hFactory.getTerminalHandle("Number",ttNumber,"0"));
-	this->getList()->addHandle(hFactory.getTerminalHandle("]",ttSymbol,"]"));	
+	this->getList()->addHandle(new Constant);
+//	this->getList()->addHandle(hFactory.getTerminalHandle("Number",ttNumber,"0"));
+	this->getList()->addHandle(hFactory.getTerminalHandle("]",ttSymbol,"]"));
 }
 
 void VariableList::InnerSetup(){
@@ -1821,4 +1827,12 @@ void Expression2::createHandleList(){
 	this->getList()->addHandle(new RelationalExpression);
 	this->getList()->addHandle(new BooleanOperator);
 	this->getList()->addHandle(new Expression);	
+}
+
+void Constant::InnerSetup(){
+	this->setHandleName("constant");	
+}
+
+void Constant::createHandleList(){	
+	this->getList()->addHandle(new Expression);
 }
