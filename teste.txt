@@ -4,5 +4,4 @@ private
 	const CDE = 10;
 begin
 	read x;
-end
-.
+end.

@@ -194,9 +194,9 @@ bool AnalisadorSintatico::ValidaHandle(Handle * handle, Node* parentNode){
 		parentNode->insertChild(newNode);					
 		
 		if(handle->getType()==htTerminal){
-          if(!this->anaLexico->SourceEOF()){                                          
+//          if((!this->anaLexico->SourceEOF())||(!this->anaLexico->bufferEOF())){
              this->actualToken = this->anaLexico->getToken();							
-          }
+//          }
         }
 		
 		//cout << "Reconheceu handle: " << handle->getHandleName() <<endl;

@@ -13,8 +13,7 @@ class ReadBuffer {
 		string BufferRead;
 		string BufferWrite;
 	protected:
-		void LoadBuffer();
-		bool IsBufferEmpty();
+		void LoadBuffer();		
 	public:
 		ReadBuffer();	
 		~ReadBuffer();
@@ -28,6 +27,7 @@ class ReadBuffer {
 		bool IsFileOpen();
 		bool IsFileGood();
 		bool IsBufferWriteEmpty();
+		bool IsBufferEmpty();
 		string getBuffer();	
 		char getLastCharOnBuffer();
 		char getChar();

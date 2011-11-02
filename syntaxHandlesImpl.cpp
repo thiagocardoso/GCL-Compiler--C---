@@ -253,8 +253,9 @@ class VariableAccessList:public NonTerminalHandle{
 		void createHandleList();
 };
 
-class VariableAccessList2:public VariableAccessList{
+class VariableAccessList2:public NonTerminalHandle{
 	public:
+        void InnerSetup();
 		void createHandleList();
 };
 
@@ -818,7 +819,8 @@ void IndexOrCompParts2::createHandleList(){
 }
 
 void VariableMore::InnerSetup(){
-	this-> setHandleName("variableMore");
+	this->setHandleName("variableMore");
+	this->setAllowEmpty(true);
 }
 
 void VariableMore::createHandleList(){
@@ -857,7 +859,7 @@ void VariableMore3::createHandleList(){
 
 void VariableMore4::createHandleList(){
 	HandleFactory hFactory;
-	this->getList()->addHandle(hFactory.getTerminalHandle("ident",ttId,"ident"));
+	this->getList()->addHandle(hFactory.getTerminalHandle("Ident",ttId,"Ident"));
 }
 
 void NextItem::InnerSetup(){
@@ -1093,11 +1095,17 @@ void VariableAccessList::InnerSetup(){
 void VariableAccessList::createHandleList(){
 	HandleFactory hFactory;
 	this->getList()->addHandle(new VariableAccess);
-	this->getOtherList()->addHandle(new VariableAccessList2);
+	//this->getOtherList()->addHandle(new VariableAccessList2);
+	this->getList()->addHandle(new VariableAccessList2);
+}
+
+void VariableAccessList2::InnerSetup(){
+	this->setHandleName("variableAccessList2");
+	this->setAllowEmpty(true);
 }
 
 void VariableAccessList2::createHandleList(){
-	HandleFactory hFactory;
+	HandleFactory hFactory;	
 	this->getList()->addHandle(new VariableAccess);
 	this->getList()->addHandle(hFactory.getTerminalHandle(",",ttSymbol,","));
 	this->getList()->addHandle(new VariableAccessList);

@@ -38,6 +38,7 @@ class AnalisadorLexico {
 		string getFileName();				
 		Token* getToken();
 		bool SourceEOF();
+		bool bufferEOF();
 };
 
 AnalisadorLexico::AnalisadorLexico(string NomeArquivo){
@@ -60,7 +61,11 @@ void AnalisadorLexico::setFileName(string Value)
 }
 
 bool AnalisadorLexico::SourceEOF(){
-	return not(this->ReadBuf.IsFileGood());
+	return (not(this->ReadBuf.IsFileGood()));
+}
+
+bool AnalisadorLexico::bufferEOF(){
+	return this->ReadBuf.IsBufferEmpty();
 }
 
 string AnalisadorLexico::getFileName()
@@ -79,11 +84,11 @@ Token* AnalisadorLexico::getToken(){
 	TokenFactory tkFactory;		
 	Token* returnToken = NULL;
 	
-	while ((this->ReadBuf.IsFileGood())and(not(this->ValidToken))){	
+	while (((this->ReadBuf.IsFileGood())||(!this->ReadBuf.IsBufferEmpty()))and(not(this->ValidToken))){	
 		this->Automato(this->ReadBuf.getChar());
 	}
 
-    if((!this->ReadBuf.IsFileGood())&&(!this->ReadBuf.IsBufferWriteEmpty())){
+    if((!this->ReadBuf.IsFileGood())&&(!this->ReadBuf.IsBufferWriteEmpty())&&(!this->ValidToken)){
        this->TokenFound();       
     }
 	
@@ -177,10 +182,12 @@ void AnalisadorLexico::TrataSimbolo(char Simbolo){
 }
 	
 void AnalisadorLexico::TokenFound(){
-	ValidToken = true;
-	Estado = S0;	
-	this->ReadBuf.PriorColNumber();	
-	
+	ValidToken = true;	   
+    
+	this->ReadBuf.PriorColNumber();	    
+    
+    Estado = S0;
+    
 	if(this->palavrasReservadas.isKeyWord(this->ReadBuf.getBuffer())){
 		this->CurrentTokenType = ttKeyword;
 	}
