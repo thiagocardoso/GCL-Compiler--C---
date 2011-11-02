@@ -150,6 +150,7 @@ void AnalisadorLexico::TrataDoisSimbolo(char Simbolo){
 		break;}
 		
 		case '-': {this->CheckAddToBuffer('-',Simbolo); break;}
+  	    case '>': {this->CheckAddToBuffer('-',Simbolo); break;}
 		
 		case ']': {this->CheckAddToBuffer('[',Simbolo); break;} 
 	    default: this->TokenFound();

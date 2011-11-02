@@ -218,8 +218,9 @@ class RelationalExpression:public NonTerminalHandle{
 		void createHandleList();
 };
 
-class RelationalExpression2:public RelationalExpression{
+class RelationalExpression2:public NonTerminalHandle{
 	public:
+		void InnerSetup();
 		void createHandleList();
 };
 
@@ -1050,12 +1051,16 @@ void RelationalExpression::InnerSetup(){
 
 void RelationalExpression::createHandleList(){
 	this->getList()->addHandle(new SimpleExpression); 
-	
-	this->getOtherList()->addHandle(new RelationalExpression2);
+	this->getList()->addHandle(new RelationalExpression2);
+//	this->getOtherList()->addHandle(new RelationalExpression2);
+}
+
+void RelationalExpression2::InnerSetup(){
+	this->setHandleName("relationalExpression2");
+	this->setAllowEmpty(true);
 }
 
 void RelationalExpression2::createHandleList(){
-	this->getList()->addHandle(new SimpleExpression);
 	this->getList()->addHandle(new RelationalOperator);
 	this->getList()->addHandle(new SimpleExpression);
 }
@@ -1320,11 +1325,11 @@ void Definition3::createHandleList(){
 }
 
 void Definition4::createHandleList(){	
-//   this->getList()->addHandle(new ProcedureDef);		
+   this->getList()->addHandle(new ProcedureDef);		
 }
 
 void Definition5::createHandleList(){	
-//	this->getList()->addHandle(new ProcedureDecl);	
+	this->getList()->addHandle(new ProcedureDecl);	
 }
 
 void ConstantDef::InnerSetup(){
@@ -1586,8 +1591,8 @@ void ParamPartOptParts::createHandleList(){
 	HandleFactory hFactory;	
 	this->getList()->addHandle(hFactory.getTerminalHandle(";",ttSymbol,";"));
 	this->getList()->addHandle(new ParamDef);			
-	
-	this->getOtherList()->addHandle(new ParamPartOptParts2);
+	this->getList()->addHandle(new ParamPartOptParts);
+	//this->getOtherList()->addHandle(new ParamPartOptParts2);
 }
 
 void ParamPartOptParts2::createHandleList(){		
