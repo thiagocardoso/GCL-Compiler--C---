@@ -2,6 +2,10 @@ module search
 const ABC = 30;
 private
 	const CDE = 10;
+	Integer x;
+	String y;
+	Real w;
+	Boolean t;
 begin
 	read x;
 	a := 10;

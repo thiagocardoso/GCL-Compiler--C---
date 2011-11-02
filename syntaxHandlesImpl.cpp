@@ -1284,8 +1284,8 @@ void DefinitionParts::createHandleList(){
 	HandleFactory hFactory;	
 	this->getList()->addHandle(new Definition);
 	this->getList()->addHandle(hFactory.getTerminalHandle(";",ttSymbol,";"));	
-	
-	this->getOtherList()->addHandle(new DefinitionParts2);
+	this->getList()->addHandle(new DefinitionParts);
+	//this->getOtherList()->addHandle(new DefinitionParts2);
 }
 
 void DefinitionParts2::createHandleList(){	
