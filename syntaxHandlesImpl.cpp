@@ -319,6 +319,7 @@ class ExpressionList:public NonTerminalHandle{
 
 class ExpressionList2:public NonTerminalHandle{
 	public:
+		void InnerSetup(); 
 		void createHandleList();
 }; 
 
@@ -691,8 +692,9 @@ class CallStatement: public NonTerminalHandle {
 		void createHandleList();
 };
 
-class CallStatement2: public CallStatement {
+class CallStatement2: public NonTerminalHandle {
 	public:		
+        void InnerSetup();     
 		void createHandleList();
 };
 
@@ -702,8 +704,9 @@ class ArgumentList: public NonTerminalHandle {
 		void createHandleList();
 };
 
-class ArgumentList2: public ArgumentList {
+class ArgumentList2: public NonTerminalHandle {
 	public:		
+		void InnerSetup();             
 		void createHandleList();
 };
 
@@ -1206,12 +1209,18 @@ void ExpressionList::InnerSetup(){
 
 void ExpressionList::createHandleList(){
 	this->getList()->addHandle(new Expression);
-	this->getOtherList()->addHandle(new ExpressionList2);
+    this->getList()->addHandle(new ExpressionList2);
+//	this->getOtherList()->addHandle(new ExpressionList2);
+}
+
+void ExpressionList2::InnerSetup(){
+	this->setHandleName("expressionList2");
+	this->setAllowEmpty(true);
 }
 
 void ExpressionList2::createHandleList(){
 	HandleFactory hFactory;
-	this->getList()->addHandle(new Expression);
+//	this->getList()->addHandle(new Expression);
 	this->getList()->addHandle(hFactory.getTerminalHandle(",",ttSymbol,","));
 	this->getList()->addHandle(new ExpressionList);
 }
@@ -1575,6 +1584,7 @@ void ParamPart::createHandleList(){
 
 void ParamPartOpt::InnerSetup(){
 	this->setHandleName("paramPartOpt");
+	this->setAllowEmpty(true);
 }
 
 void ParamPartOpt::createHandleList(){		
@@ -1715,8 +1725,8 @@ void GuardedCommandList::InnerSetup(){
 
 void GuardedCommandList::createHandleList(){		
 	this->getList()->addHandle(new GuardedCommand);			
-	
-	this->getOtherList()->addHandle(new GuardedCommandList2);
+	this->getList()->addHandle(new GuardedCommandParts);
+//	this->getOtherList()->addHandle(new GuardedCommandList2);
 }
 
 void GuardedCommandList2::createHandleList(){	
@@ -1726,6 +1736,7 @@ void GuardedCommandList2::createHandleList(){
 
 void GuardedCommandParts::InnerSetup(){
 	this->setHandleName("guardedCommandParts");	
+	this->setAllowEmpty(true);
 }
 
 void GuardedCommandParts::createHandleList(){	
@@ -1786,14 +1797,19 @@ void CallStatement::InnerSetup(){
 void CallStatement::createHandleList(){	
 	HandleFactory hFactory;	
 	this->getList()->addHandle(hFactory.getTerminalHandle("Ident",ttId,"Ident"));
-	this->getList()->addHandle(new ArgumentList);	
-	
-	this->getOtherList()->addHandle(new CallStatement2);
+	this->getList()->addHandle(new CallStatement2);
+    this->getList()->addHandle(new ArgumentList);	
+	//this->getOtherList()->addHandle(new CallStatement2);
+}
+
+void CallStatement2::InnerSetup(){
+	this->setHandleName("callStatement2");	
+	this->setAllowEmpty(true);
 }
 
 void CallStatement2::createHandleList(){	
 	HandleFactory hFactory;	
-	this->getList()->addHandle(hFactory.getTerminalHandle("Ident",ttId,"Ident"));
+	//this->getList()->addHandle(hFactory.getTerminalHandle("Ident",ttId,"Ident"));
 	this->getList()->addHandle(hFactory.getTerminalHandle(".",ttSymbol,"."));
 	this->getList()->addHandle(hFactory.getTerminalHandle("Ident",ttId,"Ident"));
 	this->getList()->addHandle(new ArgumentList);	
@@ -1806,16 +1822,22 @@ void ArgumentList::InnerSetup(){
 void ArgumentList::createHandleList(){	
 	HandleFactory hFactory;	
 	this->getList()->addHandle(hFactory.getTerminalHandle("(",ttSymbol,"("));	
+	this->getList()->addHandle(new ArgumentList2);	
 	this->getList()->addHandle(hFactory.getTerminalHandle(")",ttSymbol,")"));
 	
-	this->getOtherList()->addHandle(new ArgumentList2);
+//	this->getOtherList()->addHandle(new ArgumentList2);
+}
+
+void ArgumentList2::InnerSetup(){
+	this->setHandleName("argumentList2");	
+	this->setAllowEmpty(true);
 }
 
 void ArgumentList2::createHandleList(){	
 	HandleFactory hFactory;	
-	this->getList()->addHandle(hFactory.getTerminalHandle("(",ttSymbol,"("));	
+//	this->getList()->addHandle(hFactory.getTerminalHandle("(",ttSymbol,"("));	
 	this->getList()->addHandle(new ExpressionList);	
-	this->getList()->addHandle(hFactory.getTerminalHandle(")",ttSymbol,")"));	
+//	this->getList()->addHandle(hFactory.getTerminalHandle(")",ttSymbol,")"));	
 }
 
 void Expression::InnerSetup(){

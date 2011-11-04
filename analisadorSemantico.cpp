@@ -25,6 +25,7 @@ class AnalisadorSemantico{
 		void criarListas();
 	public:
 		AnalisadorSemantico(Node* arvoreSintatica);
+		void Executar();
 };
 
 AnalisadorSemantico::AnalisadorSemantico(Node* arvoreSintatica){
@@ -32,6 +33,10 @@ AnalisadorSemantico::AnalisadorSemantico(Node* arvoreSintatica){
 	this->escopoAtual = 0;
 	
 	this->criarListas();
+}
+
+void AnalisadorSemantico::Executar(){
+     this->validarNo(this->arvore);
 }
 
 void AnalisadorSemantico::validarNo(Node* actualNode){

@@ -1,18 +1,18 @@
-module search
-const ABC = 30;
-private
-	const CDE = 10;
-	typedef Integer range [1..size] sizer;
-	typedef Integer array [sizer] elements;
-	Integer x;
-	String y;
-	Real w;
-	Boolean t;
+module search  
+private 
+	const size = 10;  
+	Integer A;
+
+	proc search (val Integer B)
+	Integer m; 
+	Integer i; 
+	Boolean found;
+	Integer where;
+	begin 
+		i:= 1;
+		m := size;
+		found := False;		
+	end;  
 begin
-	read x;
-	a := 10;
-	b := 10+5;
-	c := a+b;
-	
-	write c;
-end.
+	A := 20;
+end.  

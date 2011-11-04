@@ -6,18 +6,22 @@ using namespace std;
 
 void Executa(string fileName){
 	AnalisadorSintatico analSint(fileName);
+	AnalisadorSemantico* analSem;
 	//analSint.GeraArvoreSintatica();
 	//analSint.ListaHandles();
 
 	if (analSint.ValidaProducoes()){
-		cout << "Reconheceu!"<<endl;
+		cout << "Reconheceu!"<<endl;		
 		cout << endl;
-		analSint.printArvoreSintatica();		
+		//analSint.printArvoreSintatica();		
+		
+		analSem = new AnalisadorSemantico(analSint.getArvoreSintatica());
+		analSem->Executar();
 	}else{
 		cout << "Erro!"<<endl;
     }
     
-    //system("pause");
+    system("pause");
 }
 
 int main(int argc, char** argv){
