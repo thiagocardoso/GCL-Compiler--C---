@@ -14,6 +14,16 @@ class TratadorTypeDef {
 		void Execute();		
 };
 
+class TratadorProcDecl {
+	private:
+		std::map<int, ListaIdentificadores*> *list;
+		int escopoAtual;
+		Node* node;
+	public:
+		TratadorProcDecl(std::map<int, ListaIdentificadores*>* procList, Node* node, int escopoAtual);	
+		void Execute();	
+};
+
 TratadorTypeDef::TratadorTypeDef(std::map<int, ListaIdentificadores*>* typeList, Node* node, int escopoAtual){
 	this->list = typeList;
 	this->node = node;
@@ -42,8 +52,7 @@ TypeIdent* TratadorTypeDef::setBaseType(Node* typeNode){
 	}
 }
 
-void TratadorTypeDef::Execute(){
-    Node* root = node;
+void TratadorTypeDef::Execute(){    
 	Node* actual;	
 	
 	node->firstChild();
@@ -64,5 +73,24 @@ void TratadorTypeDef::Execute(){
 		}else{
 			//ERRO NAO ENCONTROU TIPO BASE
 		}
+	}	
+}
+
+TratadorProcDecl::TratadorProcDecl(std::map<int, ListaIdentificadores*>* procList, Node* node, int escopoAtual){
+	this->list = procList;
+	this->escopoAtual = escopoAtual;
+	this->node = node;
+}
+
+void TratadorProcDecl::Execute(){    
+	Node* actual;	
+	
+	node->firstChild();
+	actual = node->getChild();	
+	if(actual->getToken()->getLexema()=="proc"){
+		node->nextChild();
+		actual = node->getChild();
+		
+		(*this->list)[this->escopoAtual]->addProc(actual->getToken());				
 	}	
 }

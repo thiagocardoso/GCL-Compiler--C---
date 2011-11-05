@@ -124,7 +124,12 @@ bool AnalisadorSemantico::chamaTratador(Node* node){
     if(node->getHandle()->getHandleName()=="typeDef"){
 		this->typeDef(node);
 		result = true;
-    }
+    }else{
+		if(node->getHandle()->getHandleName()=="procedureDecl"){
+			this->procedureDef(node);
+			result = true;
+		}
+	}
      
      return result;
 }
@@ -139,6 +144,8 @@ void AnalisadorSemantico::variableDef(Node* node){
 
 void AnalisadorSemantico::procedureDef(Node* node){
 	//ignorar o primeiro nó filho que é o "proc", pegar o segundo nó "ident" e adicionar na lista de procedures
+	TratadorProcDecl tratador(&this->procList, node, this->escopoAtual);
+	tratador.Execute();	
 }
 
 void AnalisadorSemantico::validaAssign(Node* node){

@@ -102,6 +102,8 @@ ProcIdent::ProcIdent(Token* token){
 	this->setToken(token);
 	this->setType(itProc);
 	this->setName(token->getLexema());
+	
+	cout << "Adicionou procedimento: " << this->getName() << "." <<endl;	
 }
 
 TypeIdent::TypeIdent(Token* token, TypeIdent* tipoBase){

@@ -1,6 +1,9 @@
 module search  
   typedef Integer a;
 private 
+	proc Novo()
+	begin
+	end;
 begin
 	A := 20;
 end.  
