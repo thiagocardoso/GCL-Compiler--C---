@@ -158,6 +158,8 @@ VarIdent::VarIdent(Token* token, VarType tipoVar, TypeIdent* type){
 	this->setName(token->getLexema());
 	this->tipoVariavel = tipoVar;
 	this->type = type;
+	
+	cout << "Adicionou variavel: " << this->getName() << "." <<endl;	
 }
 
 VarType VarIdent::getTipoVariavel(){

@@ -147,7 +147,7 @@ void TratadorVariableAccess::Execute(){
 
 TratadorVariableDef::TratadorVariableDef(std::map<int, ListaIdentificadores*>* varList, std::map<int, ListaIdentificadores*>* typeList, Node* node, int escopoAtual){
 	this->varList = varList;
-	this->typeList = varList;
+	this->typeList = typeList;
 	this->escopoAtual = escopoAtual;
 	this->node = node;	
 }
@@ -159,15 +159,19 @@ void TratadorVariableDef::Execute(){
 	node->firstChild();
 	actual = node->getChild();
 	actual->firstChild();
-	if(actual->getChild()->getHandle()->getHandleName()=="typeSymbol"){
-		type = this->getType(actual->getChild());
-	}
+	//if(actual->getChild()->getHandle()->getHandleName()=="typeSymbol"){
+//		type = this->getType(actual->getChild());
+	//}
+    type = this->getType(actual);
 	
 	if(type!=NULL){
-		actual->nextChild();
+        node->nextChild();
+        actual = node->getChild();
+                   
+//		actual->nextChild();
 		if(actual->getChild()->getHandle()->getHandleName()=="variableList"){
 			actual = actual->getChild();
-			
+			//actual->getHandle()->getHandleName()
 			actual->firstChild();
 			this->addVariavel(type, actual->getChild());
 			
@@ -210,4 +214,24 @@ void TratadorVariableDef::addVariavel(TypeIdent* type, Node* varNode){
 }
 
 TypeIdent* TratadorVariableDef::getType(Node* typeNode){
+	int escopo = this->escopoAtual;
+	Node* typeSymbol;
+	TypeIdent* resultType=NULL;
+	
+	typeNode->firstChild();
+	
+	if(typeNode->getChild()->getHandle()->getHandleName()=="typeSymbol"){	
+        typeNode->getChild()->getChild()->firstChild();
+		typeSymbol = typeNode->getChild()->getChild()->getChild();
+		
+		while((escopo>=0)&&(resultType==NULL)){
+			resultType = (TypeIdent*) (*this->typeList)[escopo]->getIdentByName(typeSymbol->getToken()->getLexema());
+		
+			escopo--;
+		}
+		
+		return resultType;
+	}else{
+		//TRATAR TUPLETYPE
+	}
 }
