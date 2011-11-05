@@ -24,6 +24,7 @@ class AnalisadorSemantico{
 		void assignStatement(Node* node);
 		void validaAssign(Node* node);
 		void criarTiposBase();
+		bool chamaTratador(Node* node);
 	public:
 		AnalisadorSemantico(Node* arvoreSintatica);
 		void Executar();
@@ -76,9 +77,7 @@ void AnalisadorSemantico::validarNo(Node* actualNode){
 				cout << "Adicionou Escopo:" << this->escopoAtual <<endl;
 			}			
 			
-			if(actualNode->getHandle()->getHandleName()=="typeDef"){
-				this->typeDef(actualNode);
-			}else{			
+			if(!this->chamaTratador(actualNode)){			
 				actualNode->firstChild();
 				while(!actualNode->eof()){
 					this->validarNo(actualNode->getChild());
@@ -103,6 +102,7 @@ void AnalisadorSemantico::validarNo(Node* actualNode){
 void AnalisadorSemantico::criarListas(){
 	this->varList[this->escopoAtual] = new ListaIdentificadores();
 	this->procList[this->escopoAtual] = new ListaIdentificadores();
+    this->typeList[this->escopoAtual] = new ListaIdentificadores();
 }
 
 void AnalisadorSemantico::adicionarEscopo(){
@@ -116,6 +116,17 @@ void AnalisadorSemantico::removerEscopo(){
 		this->procList.erase(this->escopoAtual);
 		this->escopoAtual--;
 	}
+}
+
+bool AnalisadorSemantico::chamaTratador(Node* node){
+     bool result = false;
+     
+    if(node->getHandle()->getHandleName()=="typeDef"){
+		this->typeDef(node);
+		result = true;
+    }
+     
+     return result;
 }
 
 void AnalisadorSemantico::adicionarVariavel(Node* node, VarType tipo){	

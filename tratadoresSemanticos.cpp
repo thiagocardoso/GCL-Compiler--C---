@@ -29,7 +29,8 @@ TypeIdent* TratadorTypeDef::setBaseType(Node* typeNode){
 	typeNode->firstChild();
 	
 	if(typeNode->getChild()->getHandle()->getHandleName()=="typeSymbol"){	
-		typeSymbol = typeNode->getChild()->getChild();
+        typeNode->getChild()->getChild()->firstChild();
+		typeSymbol = typeNode->getChild()->getChild()->getChild();
 		
 		while((escopo>=0)&&(this->baseType==NULL)){
 			this->baseType = (TypeIdent*) (*this->list)[escopo]->getIdentByName(typeSymbol->getToken()->getLexema());
@@ -42,6 +43,7 @@ TypeIdent* TratadorTypeDef::setBaseType(Node* typeNode){
 }
 
 void TratadorTypeDef::Execute(){
+    Node* root = node;
 	Node* actual;	
 	
 	node->firstChild();

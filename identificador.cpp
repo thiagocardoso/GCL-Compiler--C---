@@ -59,6 +59,7 @@ class ListaIdentificadores {
 		std::list<Identificador*> lista;
 		std::list<Identificador*>::iterator it;
 	public:
+        ListaIdentificadores();
 		void addVar(Token* token, VarType tipoVar, TypeIdent* type);
 		void addProc(Token* token);
 		void addType(Token* token, TypeIdent* baseType);
@@ -111,6 +112,8 @@ TypeIdent::TypeIdent(Token* token, TypeIdent* tipoBase){
 	this->rangeMin = 0;
 	this->rangeMax = 0;
 	this->rangeDefined = false;
+	
+	cout << "Adicionou tipo: " << this->getName() << "." <<endl;
 }
 
 bool TypeIdent::hasBaseType(){
@@ -157,6 +160,10 @@ VarIdent::VarIdent(Token* token, VarType tipoVar, TypeIdent* type){
 
 VarType VarIdent::getTipoVariavel(){
 	return this->tipoVariavel;
+}
+
+ListaIdentificadores::ListaIdentificadores(){
+    this->it = this->lista.begin();
 }
 
 void ListaIdentificadores::addVar(Token* token, VarType tipoVar, TypeIdent* type){
