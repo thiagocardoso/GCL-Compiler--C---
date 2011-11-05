@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include "errosList.cpp"
 #include "analisadorSintatico.cpp"
 #include "analisadorSemantico.cpp"
 using namespace std;
