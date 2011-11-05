@@ -21,7 +21,7 @@ void Executa(string fileName){
 		cout << "Erro!"<<endl;
     }
     
-    system("pause");
+    //system("pause");
 }
 
 int main(int argc, char** argv){
