@@ -65,7 +65,7 @@ void AnalisadorSemantico::validarNo(Node* actualNode){
 	bool novoEscopo = false;
 	
 	switch(actualNode->getHandle()->getType()){
-		case htNonTerminal:{		
+		case htNonTerminal:{					
 			novoEscopo = (actualNode->getHandle()->getHandleName()=="module")||(actualNode->getHandle()->getHandleName()=="procedureDef");
 			
 			cout << "Avaliando:" << actualNode->getHandle()->getHandleName() <<endl;
@@ -74,21 +74,24 @@ void AnalisadorSemantico::validarNo(Node* actualNode){
 				this->adicionarEscopo();
 				
 				cout << "Adicionou Escopo:" << this->escopoAtual <<endl;
-			}
+			}			
 			
-			actualNode->firstChild();
-			while(!actualNode->eof()){
-				this->validarNo(actualNode->getChild());
+			if(actualNode->getHandle()->getHandleName()=="typeDef"){
+				this->typeDef(actualNode);
+			}else{			
+				actualNode->firstChild();
+				while(!actualNode->eof()){
+					this->validarNo(actualNode->getChild());
+					
+					actualNode->nextChild();
+				}
 				
-				actualNode->nextChild();
+				if(novoEscopo){
+					cout << "Removeu Escopo:" << this->escopoAtual <<endl;
+					
+					this->removerEscopo();				
+				}
 			}
-			
-			if(novoEscopo){
-				cout << "Removeu Escopo:" << this->escopoAtual <<endl;
-				
-				this->removerEscopo();				
-			}
-			
 			break;
 		}
 		case htTerminal:{
@@ -137,7 +140,7 @@ void AnalisadorSemantico::assignStatement(Node* node){
 
 void AnalisadorSemantico::typeDef(Node* node){
 	//ignorar o primeiro nó filho que é o "typedef", buscar o tipo base a partir do segundo, passar o token do terceiro nó para adicionar (identificador)
-	TratadorTypeDef tratador(&this->typeList, node);
+	TratadorTypeDef tratador(&this->typeList, node, this->escopoAtual);
 	tratador.Execute();
 }
 

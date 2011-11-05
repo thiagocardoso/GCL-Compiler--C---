@@ -48,8 +48,9 @@ class TypeIdent: public Identificador {
 class VarIdent:public Identificador {
 	private:
 		VarType tipoVariavel;
+		TypeIdent* type;
 	public:
-		VarIdent(Token* token, VarType tipoVar);
+		VarIdent(Token* token, VarType tipoVar, TypeIdent* type);
 		VarType getTipoVariavel();
 };
 
@@ -58,7 +59,7 @@ class ListaIdentificadores {
 		std::list<Identificador*> lista;
 		std::list<Identificador*>::iterator it;
 	public:
-		void addVar(Token* token, VarType tipoVar);
+		void addVar(Token* token, VarType tipoVar, TypeIdent* type);
 		void addProc(Token* token);
 		void addType(Token* token, TypeIdent* baseType);
 		void next();
@@ -146,19 +147,20 @@ bool TypeIdent::isRangeDefined(){
 	return this->rangeDefined;
 }
 
-VarIdent::VarIdent(Token* token, VarType tipoVar){
+VarIdent::VarIdent(Token* token, VarType tipoVar, TypeIdent* type){
 	this->setToken(token);
 	this->setType(itVar);
 	this->setName(token->getLexema());
 	this->tipoVariavel = tipoVar;
+	this->type = type;
 }
 
 VarType VarIdent::getTipoVariavel(){
 	return this->tipoVariavel;
 }
 
-void ListaIdentificadores::addVar(Token* token, VarType tipoVar){
-	this->lista.push_back(new VarIdent(token, tipoVar));	
+void ListaIdentificadores::addVar(Token* token, VarType tipoVar, TypeIdent* type){
+	this->lista.push_back(new VarIdent(token, tipoVar, type));	
 }
 
 void ListaIdentificadores::addProc(Token* token){
