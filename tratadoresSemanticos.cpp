@@ -24,6 +24,30 @@ class TratadorProcDecl {
 		void Execute();	
 };
 
+class TratadorVariableAccess {
+	private:
+		std::map<int, ListaIdentificadores*> *list;
+		int escopoAtual;
+		Node* node;
+	public:
+		TratadorVariableAccess(std::map<int, ListaIdentificadores*>* varList, Node* node, int escopoAtual);	
+		void Execute();
+};
+
+class TratadorVariableDef {
+	private:
+		std::map<int, ListaIdentificadores*> *varList;
+		std::map<int, ListaIdentificadores*> *typeList;
+		int escopoAtual;
+		Node* node;		
+	protected:
+		TypeIdent* getType(Node* typeNode);		
+		void addVariavel(TypeIdent* type, Node* varNode);
+	public:
+		TratadorVariableDef(std::map<int, ListaIdentificadores*>* varList, std::map<int, ListaIdentificadores*>* typeList, Node* node, int escopoAtual);	
+		void Execute();
+};
+
 TratadorTypeDef::TratadorTypeDef(std::map<int, ListaIdentificadores*>* typeList, Node* node, int escopoAtual){
 	this->list = typeList;
 	this->node = node;
@@ -93,4 +117,97 @@ void TratadorProcDecl::Execute(){
 		
 		(*this->list)[this->escopoAtual]->addProc(actual->getToken());				
 	}	
+}
+
+TratadorVariableAccess::TratadorVariableAccess(std::map<int, ListaIdentificadores*>* varList, Node* node, int escopoAtual){
+	this->list = varList;
+	this->escopoAtual = escopoAtual;
+	this->node = node;	
+}
+
+void TratadorVariableAccess::Execute(){
+	Node* actual;
+	bool result = false;
+	int escopo = this->escopoAtual;
+	
+	node->firstChild();
+	actual = node->getChild();
+	
+	while((escopo>=0)&&(!result)){
+		result = (*this->list)[escopo]->exists(actual->getToken()->getLexema());
+		
+		escopo--;
+	}
+	
+	if(!result){
+		//ERRO - VARIAVEL NAO DECLARADA
+		cout << "Variavel não encontrada: " << actual->getToken()->getLexema()<<endl;
+	}
+}
+
+TratadorVariableDef::TratadorVariableDef(std::map<int, ListaIdentificadores*>* varList, std::map<int, ListaIdentificadores*>* typeList, Node* node, int escopoAtual){
+	this->varList = varList;
+	this->typeList = varList;
+	this->escopoAtual = escopoAtual;
+	this->node = node;	
+}
+
+void TratadorVariableDef::Execute(){
+	Node* actual;
+	TypeIdent* type = NULL;
+	
+	node->firstChild();
+	actual = node->getChild();
+	actual->firstChild();
+	if(actual->getChild()->getHandle()->getHandleName()=="typeSymbol"){
+		type = this->getType(actual->getChild());
+	}
+	
+	if(type!=NULL){
+		actual->nextChild();
+		if(actual->getChild()->getHandle()->getHandleName()=="variableList"){
+			actual = actual->getChild();
+			
+			actual->firstChild();
+			this->addVariavel(type, actual->getChild());
+			
+			actual->nextChild();
+			if(actual->getChild()->getHandle()->getHandleName()=="variableListParts"){
+				actual = actual->getChild();
+				
+				actual->firstChild();
+				if(!actual->eof()){
+					actual->nextChild();
+					this->addVariavel(type, actual->getChild());
+				}
+			}
+		}
+	}else{
+		//ERRO - TIPO NAO DECLARADO
+	}
+}
+
+void TratadorVariableDef::addVariavel(TypeIdent* type, Node* varNode){
+	VarType varType = vtTypeDef;
+	
+	if(type->getName()=="Boolean"){
+		varType = vtBoolean;
+	}
+
+	if(type->getName()=="Integer"){
+		varType = vtInteger;
+	}
+	
+	if(type->getName()=="String"){
+		varType = vtString;
+	}
+	
+	if(type->getName()=="Real"){
+		varType = vtReal;
+	}
+	
+	(*this->varList)[this->escopoAtual]->addVar(varNode->getToken(), varType, type);
+}
+
+TypeIdent* TratadorVariableDef::getType(Node* typeNode){
 }

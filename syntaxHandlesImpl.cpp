@@ -1523,7 +1523,7 @@ void VariableListParts::createHandleList(){
 	HandleFactory hFactory;	
 	this->getList()->addHandle(hFactory.getTerminalHandle(",",ttSymbol,","));
 	this->getList()->addHandle(hFactory.getTerminalHandle("Ident",ttId,"Ident"));	
-	
+	//arrumar: tem que adicionar N variaveis...
 	//this->getOtherList()->addHandle(new VariableListParts2);
 }
 

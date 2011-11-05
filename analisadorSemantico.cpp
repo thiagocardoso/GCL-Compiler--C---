@@ -22,6 +22,7 @@ class AnalisadorSemantico{
 		void procedureDef(Node* node);
 		void typeDef(Node* node);
 		void assignStatement(Node* node);
+		void variableAccess(Node* node);
 		void validaAssign(Node* node);
 		void criarTiposBase();
 		bool chamaTratador(Node* node);
@@ -128,7 +129,17 @@ bool AnalisadorSemantico::chamaTratador(Node* node){
 		if(node->getHandle()->getHandleName()=="procedureDecl"){
 			this->procedureDef(node);
 			result = true;
-		}
+		}else{
+			if(node->getHandle()->getHandleName()=="variableAccess"){
+				this->variableAccess(node);
+				result = true;
+			}else{
+				if(node->getHandle()->getHandleName()=="variableDef"){
+					this->variableDef(node);
+					result = true;
+				}
+			}
+		}		
 	}
      
      return result;
@@ -140,6 +151,8 @@ void AnalisadorSemantico::adicionarVariavel(Node* node, VarType tipo){
 
 void AnalisadorSemantico::variableDef(Node* node){
 	//pegar o primeiro nó filho que é o tipo, tratar e chamar o "adicionarVariavel" passando o segundo nó que é a variableList
+	TratadorVariableDef tratador(&this->varList, &this->typeList, node, this->escopoAtual);
+	tratador.Execute();
 }
 
 void AnalisadorSemantico::procedureDef(Node* node){
@@ -159,6 +172,11 @@ void AnalisadorSemantico::assignStatement(Node* node){
 void AnalisadorSemantico::typeDef(Node* node){
 	//ignorar o primeiro nó filho que é o "typedef", buscar o tipo base a partir do segundo, passar o token do terceiro nó para adicionar (identificador)
 	TratadorTypeDef tratador(&this->typeList, node, this->escopoAtual);
+	tratador.Execute();
+}
+
+void AnalisadorSemantico::variableAccess(Node* node){
+	TratadorVariableAccess tratador(&this->varList, node, this->escopoAtual);
 	tratador.Execute();
 }
 
