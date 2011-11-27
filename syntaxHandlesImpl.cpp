@@ -727,6 +727,29 @@ class Constant: public NonTerminalHandle {
 		void createHandleList();
 };
 
+class StringExpression: public NonTerminalHandle{
+	public:
+		void InnerSetup();
+		void createHandleList();
+};
+
+class RealConstant: public NonTerminalHandle{
+	public:
+		void InnerSetup();
+		void createHandleList();
+};
+
+class Numbers: public NonTerminalHandle{
+	public:
+		void InnerSetup();
+		void createHandleList();
+};
+
+class Numbers2: public Numbers{
+	public:
+		void createHandleList();
+};
+
 // ImplementaÃ§Ã£o
 
 void RegisterHandlesCommand::Execute(){
@@ -1862,4 +1885,38 @@ void Constant::InnerSetup(){
 
 void Constant::createHandleList(){	
 	this->getList()->addHandle(new Expression);
+}
+
+void StringExpression::InnerSetup(){
+	this->setHandleName("stringExpression");
+}
+
+void StringExpression::createHandleList(){
+	this->getList()->addHandle(new StringConst);
+}
+
+void RealConstant::InnerSetup(){
+	this->setHandleName("realConstant");
+}
+
+void RealConstant::createHandleList(){
+	HandleFactory hFactory;
+	this->getList()->addHandle(new Numbers);
+	this->getList()->addHandle(hFactory.getTerminalHandle(".",ttSymbol,"."));
+	this->getList()->addHandle(new Numbers);
+}
+
+void Numbers::InnerSetup(){
+	this->setHandleName("numbers");
+}
+
+void Numbers::createHandleList(){
+	HandleFactory hFactory;
+	this->getList()->addHandle(hFactory.getTerminalHandle("number",ttNumber,"0"));
+	this->getOtherList()->addHandle(new Numbers2);
+}
+
+void Numbers2::createHandleList(){
+	HandleFactory hFactory;
+	this->getList()->addHandle(hFactory.getTerminalHandle("number",ttNumber,"0"));
 }

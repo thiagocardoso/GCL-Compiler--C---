@@ -6,5 +6,6 @@ private
 	begin
 	end;
 begin
-	A := 20;
+	A := 20 + 10;
+	write A;
 end.  

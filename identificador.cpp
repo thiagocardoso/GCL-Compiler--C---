@@ -103,7 +103,7 @@ ProcIdent::ProcIdent(Token* token){
 	this->setType(itProc);
 	this->setName(token->getLexema());
 	
-	cout << "Adicionou procedimento: " << this->getName() << "." <<endl;	
+	//cout << "Adicionou procedimento: " << this->getName() << "." <<endl;	
 }
 
 TypeIdent::TypeIdent(Token* token, TypeIdent* tipoBase){
@@ -115,7 +115,7 @@ TypeIdent::TypeIdent(Token* token, TypeIdent* tipoBase){
 	this->rangeMax = 0;
 	this->rangeDefined = false;
 	
-	cout << "Adicionou tipo: " << this->getName() << "." <<endl;
+	//cout << "Adicionou tipo: " << this->getName() << "." <<endl;
 }
 
 bool TypeIdent::hasBaseType(){
@@ -159,7 +159,7 @@ VarIdent::VarIdent(Token* token, VarType tipoVar, TypeIdent* type){
 	this->tipoVariavel = tipoVar;
 	this->type = type;
 	
-	cout << "Adicionou variavel: " << this->getName() << "." <<endl;	
+	//cout << "Adicionou variavel: " << this->getName() << "." <<endl;	
 }
 
 VarType VarIdent::getTipoVariavel(){

@@ -1,3 +1,4 @@
+#include <stdlib.h>
 using namespace std;
 
 class TratadorTypeDef {
@@ -70,7 +71,7 @@ TypeIdent* TratadorTypeDef::setBaseType(Node* typeNode){
 			this->baseType = (TypeIdent*) (*this->list)[escopo]->getIdentByName(typeSymbol->getToken()->getLexema());
 		
 			escopo--;
-		}
+		}		
 	}else{
 		//TRATAR TUPLETYPE
 	}
@@ -95,7 +96,7 @@ void TratadorTypeDef::Execute(){
 		if(this->baseType!=NULL){
 			(*this->list)[this->escopoAtual]->addType(actual->getToken(), this->baseType);		
 		}else{
-			//ERRO NAO ENCONTROU TIPO BASE
+			//ERRO NAO ENCONTROU TIPO BASE			
 		}
 	}	
 }
@@ -141,7 +142,8 @@ void TratadorVariableAccess::Execute(){
 	
 	if(!result){
 		//ERRO - VARIAVEL NAO DECLARADA
-		cout << "Variavel não encontrada: " << actual->getToken()->getLexema()<<endl;
+		cout << "[Linha:" << actual->getToken()->getLine()+1 << ", Coluna:"<< actual->getToken()->getColumn() <<"] Variavel não encontrada: " << actual->getToken()->getLexema()<<endl;		
+		exit(0);
 	}
 }
 

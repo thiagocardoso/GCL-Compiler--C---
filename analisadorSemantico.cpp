@@ -70,12 +70,12 @@ void AnalisadorSemantico::validarNo(Node* actualNode){
 		case htNonTerminal:{					
 			novoEscopo = (actualNode->getHandle()->getHandleName()=="module")||(actualNode->getHandle()->getHandleName()=="procedureDef");
 			
-			cout << "Avaliando:" << actualNode->getHandle()->getHandleName() <<endl;
+			//cout << "Avaliando:" << actualNode->getHandle()->getHandleName() <<endl;
 			
 			if(novoEscopo){
 				this->adicionarEscopo();
 				
-				cout << "Adicionou Escopo:" << this->escopoAtual <<endl;
+				//cout << "Adicionou Escopo:" << this->escopoAtual <<endl;
 			}			
 			
 			if(!this->chamaTratador(actualNode)){			
@@ -87,7 +87,7 @@ void AnalisadorSemantico::validarNo(Node* actualNode){
 				}
 				
 				if(novoEscopo){
-					cout << "Removeu Escopo:" << this->escopoAtual <<endl;
+					//cout << "Removeu Escopo:" << this->escopoAtual <<endl;
 					
 					this->removerEscopo();				
 				}
