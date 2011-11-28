@@ -6,7 +6,7 @@
 #include "codigoIntermediario.cpp"
 using namespace std;
 
-void Executa(string fileName){
+void Executa(string fileName, bool imprimeArvore, bool imprimeCodigo){
 	AnalisadorSintatico analSint(fileName);
 	AnalisadorSemantico* analSem;
 	GeradorCodigoIntermediario* codInt;
@@ -16,7 +16,9 @@ void Executa(string fileName){
 	if (analSint.ValidaProducoes()){
 		//cout << "Reconheceu!"<<endl;		
 		//cout << endl;
-		//analSint.printArvoreSintatica();		
+		if(imprimeArvore){
+			analSint.printArvoreSintatica();		
+		}
 		
 		analSem = new AnalisadorSemantico(analSint.getArvoreSintatica());
 		analSem->Executar();
@@ -24,7 +26,9 @@ void Executa(string fileName){
 		codInt = new GeradorCodigoIntermediario(analSint.getArvoreSintatica());
 		codInt->Executar();
 		
-		codInt->printComandos();
+		if (imprimeCodigo){
+			codInt->printComandos();
+		}
 	}else{
 		cout << "Erro ao analisar sintaticamente o arquivo."<<endl;
     }    
@@ -32,13 +36,26 @@ void Executa(string fileName){
 
 int main(int argc, char** argv){
 	int i;
+	bool imprimeArvore = false;
+	bool imprimeCodigo = false;
 	string fileName;
-	for(i=1;i<argc;i++){
-		fileName = argv[i];
+	string com = "";
+	
+	if(argc>0){
+		fileName = argv[1];	
+		
+		if(argc>=2){
+			com = argv[2];			
+			imprimeArvore = com=="-da";
+			imprimeCodigo = com=="-di";
+		}		
 	}
+	//for(i=1;i<argc;i++){
+		
+	//}
 
 	if (fileName!=""){
-		Executa(fileName);
+		Executa(fileName, imprimeArvore, imprimeCodigo);
 	}else{
 		cout << "Erro: informe um arquivo para compilar." <<endl;
 	}	
