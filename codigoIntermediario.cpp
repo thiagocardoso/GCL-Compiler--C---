@@ -22,6 +22,12 @@ class VariavelToken:public Variavel {
 		VariavelToken(Token* token);
 };
 
+class VariavelNumber: public Variavel {
+	public:
+		VariavelNumber(string valor);
+		string getValue();
+};
+
 class Atribuicao: public Comando {
 	private:
 		Variavel* cabeca;
@@ -51,6 +57,9 @@ class GeradorCodigoIntermediario {
 	public:
 		GeradorCodigoIntermediario(Node* arvoreAnotada);
 		void Executar();
+		ListaComando* getListaComandos();
+		ListaVariavel* getListaVariaveis();
+		void printComandos();
 };
 
 string Operador::getName(){
@@ -64,6 +73,14 @@ VariavelTemp::VariavelTemp(string name){
 VariavelToken::VariavelToken(Token* token){
 	this->token = token;
 	this->setName(token->getLexema());
+}
+
+VariavelNumber::VariavelNumber(string valor){
+	this->setName(valor);
+}
+
+string VariavelNumber::getValue(){
+	return this->getName();
 }
 
 void Atribuicao::setCabeca(Variavel* cabeca){
@@ -102,22 +119,30 @@ string Atribuicao::getExpressao(){
 	string result = "";
 		
 	if(this->cabeca != NULL){
-		result += this->cabeca->getName();
+		cout << this->cabeca->getName();
+		
+		//result += this->cabeca->getName();
 	}
 	
-	result +=  ":=";
+	cout << " := ";
+	//result +=  ":=";
 	
 	if(this->direita1 != NULL){
-		result += this->direita1->getName();
+		cout << this->direita1->getName();
+		//result += this->direita1->getName();
 	}
 	
 	if(this->operador != NULL){
-		result += this->operador->getName();
+		cout << this->operador->getName();
+		//result += this->operador->getName();
 	}
 	
 	if(this->direita2 != NULL){
-		result += this->direita2->getName();
+		cout << this->direita2->getName();
+		//result += this->direita2->getName();
 	}
+	
+	cout << ";"<< endl;
 }
 			
 GeradorCodigoIntermediario::GeradorCodigoIntermediario(Node* arvoreAnotada){
@@ -139,11 +164,30 @@ void GeradorCodigoIntermediario::navegaNo(Node* actualNode){
 	}
 }
 
+ListaComando* GeradorCodigoIntermediario::getListaComandos(){
+	return &this->comandos;
+}
+
+ListaVariavel* GeradorCodigoIntermediario::getListaVariaveis(){
+	return &this->variaveis;
+}
+
+void GeradorCodigoIntermediario::printComandos(){
+	this->comandos.first();
+	while(!this->comandos.eof()){
+		//cout << ((Atribuicao*)this->comandos.getComando())->getExpressao();
+		((Atribuicao*)this->comandos.getComando())->getExpressao();
+		this->comandos.next();
+	}
+}
+
 void GeradorCodigoIntermediario::trataAssign(Node* node){
 	Node* actual = NULL;
+	Node* aux = NULL;
 	Atribuicao* comando = new Atribuicao();
 	Variavel* cabeca = NULL;
 	Variavel* direita1 = NULL;
+	Operador* operador = NULL;
 	Variavel* direita2 = NULL;
 	
 	node->firstChild();
@@ -160,14 +204,14 @@ void GeradorCodigoIntermediario::trataAssign(Node* node){
 	node->nextChild();
 	node->nextChild();
 	
-	actual = node->getChild();//expressionlist
+	actual = node->getChild();//expressionlist	
 	
 	while(actual->getHandle()->getHandleName()!="simpleExpression"){
 		actual->firstChild();
 		actual = actual->getChild();
 	}
 	
-	actual->firstChild();
+	actual->firstChild();	
 	
 	if(actual->getChild()->getHandle()->getHandleName()!="term"){
 		actual->nextChild();
@@ -177,6 +221,24 @@ void GeradorCodigoIntermediario::trataAssign(Node* node){
 	actual->firstChild();
 	actual = actual->getChild(); //factor
 	
+	actual = actual->getChild(); //term
+	actual->firstChild();
+	actual = actual->getChild(); //factor
+		
+	actual = actual->getChild(); //term
+	actual->firstChild();
+	actual = actual->getChild(); //factor			
+	
+	actual->firstChild();
+	actual = actual->getChild(); //factor		
+	
+	actual->firstChild();
+	aux = actual->getChild(); //factor			
+	
+	direita1 = new VariavelNumber(aux->getToken()->getLexema());
+	comando->setDireita1(direita1);
+	
+	this->comandos.addComando(comando);
 }
 
 void GeradorCodigoIntermediario::Executar(){

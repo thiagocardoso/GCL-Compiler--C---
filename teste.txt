@@ -1,11 +1,13 @@
 module search  
   typedef Integer a;
   Integer A;
+  Integer B;
 private 
 	proc Novo()
 	begin
 	end;
 begin
-	A := 20 + 10;
+	A := 20;
+	B := 30;
 	write A;
 end.  

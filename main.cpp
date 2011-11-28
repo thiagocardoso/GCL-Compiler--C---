@@ -9,6 +9,7 @@ using namespace std;
 void Executa(string fileName){
 	AnalisadorSintatico analSint(fileName);
 	AnalisadorSemantico* analSem;
+	GeradorCodigoIntermediario* codInt;
 	//analSint.GeraArvoreSintatica();
 	//analSint.ListaHandles();
 
@@ -19,6 +20,11 @@ void Executa(string fileName){
 		
 		analSem = new AnalisadorSemantico(analSint.getArvoreSintatica());
 		analSem->Executar();
+		
+		codInt = new GeradorCodigoIntermediario(analSint.getArvoreSintatica());
+		codInt->Executar();
+		
+		codInt->printComandos();
 	}else{
 		cout << "Erro ao analisar sintaticamente o arquivo."<<endl;
     }    
